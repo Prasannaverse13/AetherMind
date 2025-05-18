@@ -14,6 +14,8 @@ import {z} from 'genkit';
 
 const ExplainDefiStrategyInputSchema = z.object({
   strategy: z.string().describe('The DeFi strategy to explain (e.g., yield farming, flash loans).'),
+  // Removed okxDexMarketConditions and userTokenHoldings, as specific context for general explanations might be too broad.
+  // These are better suited for personalized suggestions or specific simulation explanations.
 });
 export type ExplainDefiStrategyInput = z.infer<typeof ExplainDefiStrategyInputSchema>;
 
@@ -37,6 +39,8 @@ const prompt = ai.definePrompt({
   3.  **Considerations for OKX DEX**: If relevant, how might this strategy apply or differ on OKX DEX?
   4.  **Before Proceeding**: What key things should a user research or consider before engaging in this strategy?
 
+  When discussing token swaps or strategies that involve exchanging assets, if applicable, briefly mention that users can explore services like 0x.org which may offer gasless swap quotes, potentially saving on transaction fees. Highlight this point by wrapping the mention in <strong> tags. For example: "<strong>Consider exploring gasless swap options:</strong> Services like 0x.org can provide quotes for gasless swaps, which might be beneficial for this strategy by potentially reducing transaction costs." Explain that this is for getting quotes and actual gasless execution is a separate step involving more complex interactions.
+
   Present the information in a structured and easy-to-understand manner. Use basic HTML tags for headings (<h3>), lists (<ul>, <ol>, <li>), paragraphs (<p>), and bold text (<strong>) to improve readability. Do not output raw Markdown.
 
   Strategy: {{{strategy}}}`,
@@ -53,4 +57,3 @@ const explainDefiStrategyFlow = ai.defineFlow(
     return output!;
   }
 );
-

@@ -48,7 +48,7 @@ const prompt = ai.definePrompt({
   {{#if riskProfile}}User Risk Profile: {{{riskProfile}}}{{/if}}
 
   Please provide:
-  1.  **Suggested Strategies**: A list of 3-5 specific DeFi strategies suitable for the user on OKX DEX. For each strategy, briefly explain it and, where appropriate, suggest example allocations based on their holdings (e.g., "Allocate X amount of Y token..."). Format this as an HTML ordered list (e.g., "<ol><li><strong>Strategy Name:</strong> Description...</li></ol>").
+  1.  **Suggested Strategies**: A list of 3-5 specific DeFi strategies suitable for the user on OKX DEX. For each strategy, briefly explain it and, where appropriate, suggest example allocations based on their holdings (e.g., "Allocate X amount of Y token..."). If any strategy involves token swaps, mention the possibility of using a service like 0x.org to find gasless swap quotes, which could reduce transaction costs. Highlight this benefit using <strong> tags. For example: "For token swaps involved in this strategy, <strong>you could look into gasless swap quotes via 0x.org</strong> to potentially save on fees. Remember this provides a quote; actual gasless execution is a more involved process." Format this as an HTML ordered list (e.g., "<ol><li><strong>Strategy Name:</strong> Description...</li></ol>").
   2.  **Rationale**: A concise explanation for why these strategies are being recommended, considering their portfolio, the market conditions, potential yield, risk (impermanent loss, liquidation risk), gas fees, {{#if riskProfile}}and importantly, their stated risk profile: '{{{riskProfile}}}'.
       *   If 'conservative', prioritize capital preservation and stable, lower-risk yields (e.g., lending stablecoins, staking well-established assets).
       *   If 'balanced', suggest a mix of strategies, some for stability and some for moderate growth with acceptable risk.
@@ -72,4 +72,3 @@ const personalizedStrategySuggestionsFlow = ai.defineFlow(
     return output!;
   }
 );
-
