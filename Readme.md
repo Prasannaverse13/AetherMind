@@ -1,5 +1,5 @@
 
-# AetherMind - Intelligent DeFi Navigator
+# AetherMind - Intelligent DeFi AI Agent Navigator
 
 ## Project Introduction
 
