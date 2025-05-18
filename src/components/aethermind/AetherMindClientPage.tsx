@@ -7,10 +7,10 @@ import { WalletOverview } from './WalletOverview';
 import { SimulationArea } from './SimulationArea';
 import { DeFiStrategyInfo } from './DeFiStrategyInfo';
 import { Button } from '@/components/ui/button';
-import { Loader2, AlertTriangle, WifiOff, Scale, Bug, ShieldX, ListCollapse, Info } from 'lucide-react';
+import { Loader2, AlertTriangle, Scale, Bug, ShieldX, ListCollapse, Info, Wallet } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
-import type { RecentSimulation, SimulationParams, SimulationResult } from '@/types';
+import type { RecentSimulation, SimulationParams, SimulationResult, RiskProfile } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
@@ -49,20 +49,32 @@ export function AetherMindClientPage() {
 
   useEffect(() => {
     setIsClient(true);
+    // Load recent simulations from localStorage if available
+    const storedSimulations = localStorage.getItem('aethermind_recent_simulations');
+    if (storedSimulations) {
+      setRecentSimulations(JSON.parse(storedSimulations));
+    }
   }, []);
+
+  useEffect(() => {
+    // Save recent simulations to localStorage whenever they change
+    if (isClient && recentSimulations.length > 0) {
+      localStorage.setItem('aethermind_recent_simulations', JSON.stringify(recentSimulations));
+    }
+  }, [recentSimulations, isClient]);
 
 
   const handleNewSimulation = (simulationResult: SimulationResult, inputParams: SimulationParams) => {
     const newRecentSimulation: RecentSimulation = {
-      id: new Date().toISOString() + Math.random().toString(), // More robust ID
+      id: new Date().toISOString() + Math.random().toString(36).substring(2,9), 
       timestamp: new Date(),
-      inputs: inputParams,
+      inputs: inputParams, // inputParams already includes riskProfile if set
       ...simulationResult,
     };
     setRecentSimulations(prev => [newRecentSimulation, ...prev.slice(0, 4)]); // Keep last 5
   };
   
-  if (!isClient) { // Initial SSR or hydration loading state
+  if (!isClient) { 
      return (
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] text-center p-8">
         <Loader2 className="h-16 w-16 animate-spin text-primary mb-6" />
@@ -73,7 +85,6 @@ export function AetherMindClientPage() {
       </div>
     );
   }
-
 
   if (walletLoading && !account && !isConnected && isClient) { 
     return (
@@ -107,7 +118,7 @@ export function AetherMindClientPage() {
               {walletLoading ? (
                 <Loader2 className="mr-2 h-5 w-5 animate-spin" />
               ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2 h-5 w-5 group-hover:animate-pulse"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg>
+                <Wallet className="mr-2 h-5 w-5 group-hover:animate-pulse" />
               )}
               Connect Metamask Wallet
             </Button>
@@ -141,7 +152,7 @@ export function AetherMindClientPage() {
             <h2 className="text-2xl font-semibold mb-6 text-foreground">Recent Simulations</h2>
             {recentSimulations.length > 0 ? (
               <Accordion type="single" collapsible className="w-full space-y-4">
-                {recentSimulations.map((sim, index) => (
+                {recentSimulations.map((sim) => (
                   <AccordionItem value={`sim-${sim.id}`} key={sim.id} className="glass-card !bg-card/70 border-border/50 rounded-lg overflow-hidden">
                     <AccordionTrigger className="p-4 hover:no-underline hover:bg-accent/10">
                       <div className="flex justify-between items-center w-full">
@@ -149,6 +160,7 @@ export function AetherMindClientPage() {
                           <h3 className="text-lg font-semibold text-primary">{sim.strategyName}</h3>
                           <p className="text-xs text-muted-foreground">
                             Simulated at: {new Date(sim.timestamp).toLocaleString()}
+                            {sim.inputs.riskProfile && <span className="capitalize"> ({sim.inputs.riskProfile})</span>}
                           </p>
                         </div>
                         <Badge variant={sim.potentialProfit && !sim.potentialProfit.includes("highly variable") ? "default" : "secondary"} className="ml-auto mr-2">
@@ -161,9 +173,13 @@ export function AetherMindClientPage() {
                         <div>
                           <h4 className="font-semibold text-foreground">Inputs:</h4>
                           <ul className="list-disc list-inside text-muted-foreground pl-2">
-                            {Object.entries(sim.inputs).map(([key, value]) => (
-                              <li key={key}><span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span> {String(value)}</li>
-                            ))}
+                            {Object.entries(sim.inputs).map(([key, value]) => {
+                              if (key === 'type' && value === 'generalAISuggestion' && sim.strategyName === "Personalized Portfolio Suggestions") return null; // Don't show 'type: generalAISuggestion' for these
+                              const formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
+                              return (
+                                <li key={key}><span className="capitalize">{formattedKey}:</span> {String(value)}</li>
+                              )
+                            })}
                           </ul>
                         </div>
                         {sim.potentialProfit && <p><strong>Potential Profit:</strong> <span className="text-green-400">{sim.potentialProfit}</span></p>}
@@ -174,13 +190,19 @@ export function AetherMindClientPage() {
                         {sim.aiSuggestions && (
                           <div>
                             <h4 className="font-semibold text-foreground mt-2">AI Suggestions:</h4>
-                            <div className="ai-response-text p-2 bg-background/50 rounded-md max-h-40 overflow-y-auto text-xs" dangerouslySetInnerHTML={{ __html: sim.aiSuggestions.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/(\d+\.\s*\*)/g, '<li><strong>').replace(/\*\*(.*?):/g, '$1:</strong>').replace(/<br \/>\s*<li>/g, '<li>').replace(/(<\/li>|<br \/>)\s*<br \/>\s*<li>/g, '$1<li>').replace(/(<li>.*?<\/li>)/g, '<ul>$1</ul>').replace(/<\/ul><ul>/g, '') }}></div>
+                            <div className="ai-response-text p-2 bg-background/50 rounded-md max-h-40 overflow-y-auto text-xs" dangerouslySetInnerHTML={{ __html: sim.aiSuggestions }}></div>
                           </div>
                         )}
                         {sim.aiRationale && (
                           <div>
                             <h4 className="font-semibold text-foreground mt-2">AI Rationale:</h4>
-                            <div className="ai-response-text p-2 bg-background/50 rounded-md max-h-40 overflow-y-auto text-xs" dangerouslySetInnerHTML={{ __html: sim.aiRationale.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }}></div>
+                            <div className="ai-response-text p-2 bg-background/50 rounded-md max-h-40 overflow-y-auto text-xs" dangerouslySetInnerHTML={{ __html: sim.aiRationale }}></div>
+                          </div>
+                        )}
+                         {sim.aiExplanation && sim.strategyName !== "Personalized Portfolio Suggestions" && (
+                          <div>
+                            <h4 className="font-semibold text-foreground mt-2">AI Explanation for {sim.strategyName}:</h4>
+                            <div className="ai-response-text p-2 bg-background/50 rounded-md max-h-60 overflow-y-auto text-xs" dangerouslySetInnerHTML={{ __html: sim.aiExplanation }}></div>
                           </div>
                         )}
                         <div>
@@ -201,7 +223,7 @@ export function AetherMindClientPage() {
                   Your recent simulation history will appear here.
                 </p>
                 <p className="text-sm text-muted-foreground mt-2">
-                  Start a new simulation to see it listed.
+                  Start a new simulation or get AI suggestions to see them listed.
                 </p>
               </div>
             )}

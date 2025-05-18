@@ -2,13 +2,13 @@
 "use client";
 
 import { useState, useTransition, useEffect } from 'react';
-import type { DeFiStrategy, DeFiStrategyType, SimulationParams, SimulationResult, RecentSimulation } from '@/types';
+import type { DeFiStrategy, DeFiStrategyType, SimulationParams, SimulationResult, RiskProfile } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Wand2, AlertCircle, Info, Zap } from 'lucide-react';
+import { Loader2, Wand2, AlertCircle, Info, Zap, Shield, TrendingUp, BarChart } from 'lucide-react';
 import { getStrategyExplanation, getPersonalizedSuggestions, getMockOkxMarketConditions } from '@/lib/actions';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -42,6 +42,12 @@ const strategies: DeFiStrategy[] = [
   },
 ];
 
+const riskProfileOptions: { value: RiskProfile; label: string; icon: React.ReactNode }[] = [
+  { value: 'conservative', label: 'Conservative', icon: <Shield className="mr-2 h-4 w-4" /> },
+  { value: 'balanced', label: 'Balanced', icon: <BarChart className="mr-2 h-4 w-4" /> },
+  { value: 'aggressive', label: 'Aggressive', icon: <TrendingUp className="mr-2 h-4 w-4" /> },
+];
+
 interface SimulationAreaProps {
   userTokenHoldingsString: string;
   onSimulationComplete: (simulationResult: SimulationResult, inputParams: SimulationParams) => void;
@@ -54,9 +60,12 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
   const [isSimulating, startSimulationTransition] = useTransition();
   const [isSuggesting, startSuggestionTransition] = useTransition();
   const [displayTime, setDisplayTime] = useState<string | null>(null);
+  const [selectedRiskProfile, setSelectedRiskProfile] = useState<RiskProfile>('balanced');
+
 
   useEffect(() => {
-    setDisplayTime(new Date().toLocaleTimeString());
+    const now = new Date();
+    setDisplayTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
   }, [simulationResult]);
 
   const selectedStrategy = strategies.find(s => s.id === selectedStrategyId);
@@ -65,7 +74,7 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
     const strategyId = value as DeFiStrategyType;
     setSelectedStrategyId(strategyId);
     const strategy = strategies.find(s => s.id === strategyId);
-    const defaultParams: SimulationParams = {};
+    const defaultParams: SimulationParams = { riskProfile: selectedRiskProfile };
     strategy?.parameters.forEach(p => {
       if (p.defaultValue !== undefined) defaultParams[p.id] = p.defaultValue;
     });
@@ -76,31 +85,39 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
   const handleParamChange = (paramId: string, value: string | number) => {
     setParams(prev => ({ ...prev, [paramId]: value }));
   };
+  
+  const handleRiskProfileChange = (value: string) => {
+    setSelectedRiskProfile(value as RiskProfile);
+    setParams(prev => ({ ...prev, riskProfile: value as RiskProfile }));
+  };
 
   const runSimulation = async () => {
     if (!selectedStrategy) return;
-    const currentParams = {...params}; // Capture current params for this simulation run
+    const currentParams: SimulationParams = {...params, riskProfile: selectedRiskProfile, type: selectedStrategy.id}; 
 
     startSimulationTransition(async () => {
       const marketConditions = await getMockOkxMarketConditions();
       
+      // For specific strategy simulation, AI explanation is primary. Suggestions are secondary.
+      const explanationInput: Parameters<typeof getStrategyExplanation>[0] = {
+        strategy: `${selectedStrategy.name} with parameters: ${JSON.stringify(currentParams)}. Context: ${selectedStrategy.okxContext}. Current market conditions on OKX DEX: ${marketConditions}. User holdings: ${userTokenHoldingsString}. User risk profile: ${selectedRiskProfile}`,
+      };
+      const aiExplanation = await getStrategyExplanation(explanationInput);
+
+      // Also get general suggestions, but they might be less relevant than the specific strategy explanation
       const suggestionsInput: Parameters<typeof getPersonalizedSuggestions>[0] = {
         userTokenHoldings: userTokenHoldingsString,
         okxDexMarketConditions: marketConditions,
+        riskProfile: selectedRiskProfile,
       };
-      // We get suggestions, but they are general. The main explanation is for the *selected* strategy.
       const aiSuggestionsForPortfolio = await getPersonalizedSuggestions(suggestionsInput);
 
-      const explanationInput: Parameters<typeof getStrategyExplanation>[0] = {
-        strategy: `${selectedStrategy.name} with parameters: ${JSON.stringify(currentParams)}. Context: ${selectedStrategy.okxContext}. Current market conditions on OKX DEX: ${marketConditions}. User holdings: ${userTokenHoldingsString}`,
-      };
-      const aiExplanation = await getStrategyExplanation(explanationInput);
 
       let result: SimulationResult = {
         strategyName: selectedStrategy.name,
         risksInvolved: selectedStrategy.risks,
-        aiExplanation: aiExplanation?.explanation || "Could not retrieve detailed explanation.",
-        aiSuggestions: aiSuggestionsForPortfolio?.suggestedStrategies || "No general portfolio suggestions generated.",
+        aiExplanation: aiExplanation?.explanation || "Could not retrieve detailed explanation for this strategy.",
+        aiSuggestions: aiSuggestionsForPortfolio?.suggestedStrategies || "No general portfolio suggestions generated at this time.",
         aiRationale: aiSuggestionsForPortfolio?.rationale || "General rationale not available.",
         gasFeeEstimation: "0.01 - 0.05 ETH (estimate based on typical network conditions)"
       };
@@ -125,17 +142,20 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
       const suggestionsInput: Parameters<typeof getPersonalizedSuggestions>[0] = {
         userTokenHoldings: userTokenHoldingsString,
         okxDexMarketConditions: marketConditions,
+        riskProfile: selectedRiskProfile,
       };
       const aiSuggestions = await getPersonalizedSuggestions(suggestionsInput);
       
       let resultData: SimulationResult;
+      const currentParams: SimulationParams = { type: "generalAISuggestion", riskProfile: selectedRiskProfile };
+
       if (aiSuggestions) {
         resultData = {
           strategyName: "Personalized Portfolio Suggestions",
           risksInvolved: ["Market Volatility", "Smart Contract Risks", "Always DYOR", "AI suggestions are not financial advice"],
           aiSuggestions: aiSuggestions.suggestedStrategies,
           aiRationale: aiSuggestions.rationale,
-          aiExplanation: "These suggestions are generated by AI based on your provided portfolio information and simulated current market conditions on OKX DEX. Review each suggestion carefully and conduct your own research."
+          aiExplanation: `These suggestions are generated by AI based on your provided portfolio information, simulated current market conditions on OKX DEX, and your selected risk profile: ${selectedRiskProfile}. Review each suggestion carefully and conduct your own research.`
         };
       } else {
          resultData = {
@@ -147,7 +167,7 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
         };
       }
       setSimulationResult(resultData);
-      onSimulationComplete(resultData, { type: "generalAISuggestion" }); // Empty params for general suggestion
+      onSimulationComplete(resultData, currentParams); 
     });
   };
 
@@ -173,22 +193,96 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
           </div>
         </CardHeader>
         <CardContent className="p-6 md:p-8 space-y-8">
-          <div className="grid md:grid-cols-2 gap-6 items-start">
-            <div>
-              <Label htmlFor="strategy-select" className="text-lg font-semibold mb-2 block text-foreground">Select DeFi Strategy to Simulate</Label>
-              <Select onValueChange={handleStrategyChange} value={selectedStrategyId || ""}>
-                <SelectTrigger id="strategy-select" className="w-full h-12 text-base">
-                  <SelectValue placeholder="Choose a strategy..." />
-                </SelectTrigger>
-                <SelectContent className="glass-card bg-popover text-popover-foreground">
-                  {strategies.map(s => (
-                    <SelectItem key={s.id} value={s.id} className="text-base py-2 focus:bg-accent">
-                      {s.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <div className="grid md:grid-cols-3 gap-6 items-start">
+            <div className="md:col-span-1 space-y-4">
+              <div>
+                <Label htmlFor="risk-profile-select" className="text-lg font-semibold mb-2 block text-foreground">Select Your Risk Profile</Label>
+                <Select onValueChange={handleRiskProfileChange} defaultValue={selectedRiskProfile}>
+                  <SelectTrigger id="risk-profile-select" className="w-full h-12 text-base">
+                    <SelectValue placeholder="Choose risk profile..." />
+                  </SelectTrigger>
+                  <SelectContent className="glass-card bg-popover text-popover-foreground">
+                    {riskProfileOptions.map(option => (
+                      <SelectItem key={option.value} value={option.value} className="text-base py-2 focus:bg-accent">
+                        <div className="flex items-center">
+                           {option.icon} {option.label}
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                 <p className="text-xs text-muted-foreground mt-1">Affects personalized AI suggestions.</p>
+              </div>
+              <div>
+                <Label htmlFor="strategy-select" className="text-lg font-semibold mb-2 block text-foreground">DeFi Strategy to Simulate</Label>
+                <Select onValueChange={handleStrategyChange} value={selectedStrategyId || ""}>
+                  <SelectTrigger id="strategy-select" className="w-full h-12 text-base" disabled={isSuggesting || isSimulating}>
+                    <SelectValue placeholder="Choose a specific strategy..." />
+                  </SelectTrigger>
+                  <SelectContent className="glass-card bg-popover text-popover-foreground">
+                    {strategies.map(s => (
+                      <SelectItem key={s.id} value={s.id} className="text-base py-2 focus:bg-accent">
+                        {s.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <div className="md:col-span-2">
               {selectedStrategy && (
+                <form onSubmit={(e) => { e.preventDefault(); runSimulation(); }} className="space-y-4 p-6 bg-background/50 rounded-lg shadow-inner">
+                  <h3 className="text-xl font-semibold mb-3 text-foreground">{selectedStrategy.name} Parameters</h3>
+                  {selectedStrategy.parameters.map(param => (
+                    <div key={param.id} className="space-y-1">
+                      <Label htmlFor={param.id} className="font-medium text-foreground">{param.label}</Label>
+                      {param.type === 'number' && (
+                        <Input
+                          id={param.id}
+                          type="number"
+                          value={params[param.id] as number || ''}
+                          placeholder={param.placeholder}
+                          onChange={e => handleParamChange(param.id, parseFloat(e.target.value))}
+                          required
+                          className="h-11"
+                          disabled={isSuggesting || isSimulating}
+                        />
+                      )}
+                      {param.type === 'select' && param.options && (
+                        <Select
+                          onValueChange={value => handleParamChange(param.id, value)}
+                          defaultValue={param.defaultValue as string || undefined}
+                          value={params[param.id] as string || undefined}
+                          disabled={isSuggesting || isSimulating}
+                        >
+                          <SelectTrigger id={param.id} className="w-full h-11">
+                            <SelectValue placeholder={param.placeholder} />
+                          </SelectTrigger>
+                          <SelectContent className="glass-card bg-popover text-popover-foreground">
+                            {param.options.map(opt => (
+                              <SelectItem key={opt.value} value={opt.value} className="focus:bg-accent">{opt.label}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    </div>
+                  ))}
+                  <Button type="submit" disabled={isSimulating || !selectedStrategy || isSuggesting} className="w-full h-12 text-base">
+                    {isSimulating ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Wand2 className="mr-2 h-5 w-5" />}
+                    Run AI Simulation for {selectedStrategy.name}
+                  </Button>
+                </form>
+              )}
+              {!selectedStrategy && !isSuggesting && !isSimulating && (
+                <div className="p-6 bg-background/30 rounded-lg shadow-inner text-center text-muted-foreground min-h-[200px] flex flex-col justify-center items-center">
+                  <Info className="h-8 w-8 mb-3" />
+                  <p>Select a risk profile and either get general AI suggestions or choose a specific strategy above to simulate its parameters.</p>
+                </div>
+              )}
+            </div>
+          </div>
+           {selectedStrategy && (
                 <Alert variant="default" className="mt-4 bg-accent/20 border-accent/30">
                   <Info className="h-5 w-5 text-accent-foreground" />
                   <AlertTitle className="font-semibold text-accent-foreground">{selectedStrategy.name}</AlertTitle>
@@ -196,65 +290,22 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
                     {selectedStrategy.description}
                     <Accordion type="single" collapsible className="w-full mt-2">
                       <AccordionItem value="details" className="border-b-0">
-                        <AccordionTrigger className="text-sm py-1 hover:no-underline text-primary hover:text-primary/80">Learn More</AccordionTrigger>
+                        <AccordionTrigger className="text-sm py-1 hover:no-underline text-primary hover:text-primary/80">Learn More Details</AccordionTrigger>
                         <AccordionContent className="text-xs text-muted-foreground pt-1 prose-sm dark:prose-invert max-w-full">
-                          <p className="mb-1">{selectedStrategy.longDescription}</p>
-                          <strong>OKX Context:</strong> {selectedStrategy.okxContext}
+                          {selectedStrategy.longDescription && <p className="mb-1">{selectedStrategy.longDescription}</p>}
+                          {selectedStrategy.okxContext && <><strong>OKX Context:</strong> {selectedStrategy.okxContext}</>}
                         </AccordionContent>
                       </AccordionItem>
                     </Accordion>
                   </AlertDescription>
                 </Alert>
               )}
-            </div>
-
-            {selectedStrategy && (
-              <form onSubmit={(e) => { e.preventDefault(); runSimulation(); }} className="space-y-4 p-6 bg-background/50 rounded-lg shadow-inner">
-                <h3 className="text-xl font-semibold mb-3 text-foreground">Strategy Parameters</h3>
-                {selectedStrategy.parameters.map(param => (
-                  <div key={param.id} className="space-y-1">
-                    <Label htmlFor={param.id} className="font-medium text-foreground">{param.label}</Label>
-                    {param.type === 'number' && (
-                      <Input
-                        id={param.id}
-                        type="number"
-                        value={params[param.id] as number || ''}
-                        placeholder={param.placeholder}
-                        onChange={e => handleParamChange(param.id, parseFloat(e.target.value))}
-                        required
-                        className="h-11"
-                      />
-                    )}
-                    {param.type === 'select' && param.options && (
-                       <Select
-                        onValueChange={value => handleParamChange(param.id, value)}
-                        defaultValue={param.defaultValue as string || undefined}
-                        value={params[param.id] as string || undefined}
-                      >
-                        <SelectTrigger id={param.id} className="w-full h-11">
-                          <SelectValue placeholder={param.placeholder} />
-                        </SelectTrigger>
-                        <SelectContent className="glass-card bg-popover text-popover-foreground">
-                          {param.options.map(opt => (
-                            <SelectItem key={opt.value} value={opt.value} className="focus:bg-accent">{opt.label}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  </div>
-                ))}
-                <Button type="submit" disabled={isSimulating || !selectedStrategy || isSuggesting} className="w-full h-12 text-base">
-                  {isSimulating ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Wand2 className="mr-2 h-5 w-5" />}
-                  Run AI Simulation
-                </Button>
-              </form>
-            )}
-          </div>
 
           {(isSimulating || isSuggesting) && !simulationResult && (
             <div className="text-center py-10">
               <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
               <p className="text-lg text-muted-foreground">AI is thinking... Please wait.</p>
+              <p className="text-sm text-muted-foreground">Generating insights for your {selectedRiskProfile} profile.</p>
             </div>
           )}
 
@@ -264,25 +315,25 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
                 <CardTitle className="text-2xl font-bold text-foreground">
                   AI Simulation Outcome: <span className="text-primary">{simulationResult.strategyName}</span>
                 </CardTitle>
-                 {displayTime && <CardDescription className="text-xs text-muted-foreground">Generated at: {displayTime}</CardDescription>}
+                 {displayTime && <CardDescription className="text-xs text-muted-foreground">Generated at: {displayTime} for {selectedRiskProfile} profile</CardDescription>}
               </CardHeader>
               <CardContent className="p-6 space-y-6">
                 {simulationResult.aiSuggestions && (
                   <div>
                     <h4 className="text-lg font-semibold mb-2 text-foreground">AI Suggested Strategies:</h4>
-                    <div className="ai-response-text p-3 bg-background/30 rounded-md max-h-60 overflow-y-auto text-sm" dangerouslySetInnerHTML={{ __html: simulationResult.aiSuggestions.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/(\d+\.\s*\*)/g, '<li><strong>').replace(/\*\*(.*?):/g, '$1:</strong>').replace(/<br \/>\s*<li>/g, '<li>').replace(/(<\/li>|<br \/>)\s*<br \/>\s*<li>/g, '$1<li>').replace(/(<li>.*?<\/li>)/g, '<ul>$1</ul>').replace(/<\/ul><ul>/g, '') }}></div>
+                    <div className="ai-response-text p-3 bg-background/30 rounded-md max-h-60 overflow-y-auto text-sm" dangerouslySetInnerHTML={{ __html: simulationResult.aiSuggestions }}></div>
                   </div>
                 )}
                  {simulationResult.aiRationale && (
                   <div>
                     <h4 className="text-lg font-semibold mb-2 text-foreground">Rationale:</h4>
-                     <div className="ai-response-text p-3 bg-background/30 rounded-md max-h-40 overflow-y-auto text-sm" dangerouslySetInnerHTML={{ __html: simulationResult.aiRationale.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }}></div>
+                     <div className="ai-response-text p-3 bg-background/30 rounded-md max-h-40 overflow-y-auto text-sm" dangerouslySetInnerHTML={{ __html: simulationResult.aiRationale }}></div>
                   </div>
                 )}
                 {simulationResult.aiExplanation && (
                   <div>
                     <h4 className="text-lg font-semibold mb-2 text-foreground">AI Detailed Explanation:</h4>
-                    <div className="ai-response-text p-3 bg-background/30 rounded-md max-h-80 overflow-y-auto text-sm" dangerouslySetInnerHTML={{ __html: simulationResult.aiExplanation.replace(/\n\n/g, '<br /><br />').replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/### (.*?)(<br \/>|$)/g, '<h3>$1</h3>').replace(/\* (.*?)(<br \/>|$)/g, '<li>$1</li>').replace(/(<\/li>|<br \/>)\s*<br \/>\s*(<li>|<h3>)/g, '$1$2').replace(/<li>/g, '<ul><li>').replace(/<\/li>(?!<li>)/g, '</li></ul>').replace(/<ul>(.*?)<\/ul>/gs, (match) => match.replace(/<br \/>/g, '')) }}></div>
+                    <div className="ai-response-text p-3 bg-background/30 rounded-md max-h-80 overflow-y-auto text-sm" dangerouslySetInnerHTML={{ __html: simulationResult.aiExplanation }}></div>
                   </div>
                 )}
                 {simulationResult.estimatedAPY && (

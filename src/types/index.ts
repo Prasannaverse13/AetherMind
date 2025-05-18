@@ -1,3 +1,4 @@
+
 export interface TokenBalance {
   symbol: string;
   name: string;
@@ -25,8 +26,12 @@ export interface DeFiStrategy {
   okxContext?: string; // How it relates to OKX DEX
 }
 
+export type RiskProfile = 'conservative' | 'balanced' | 'aggressive';
+
 export interface SimulationParams {
   [key: string]: string | number;
+  riskProfile?: RiskProfile; // Added for storing in recent simulations
+  type?: string; // to distinguish between general AI suggestions and specific strategy simulations
 }
 
 export interface SimulationResult {
@@ -45,4 +50,15 @@ export interface RecentSimulation extends SimulationResult {
   id: string;
   timestamp: Date;
   inputs: SimulationParams;
+}
+
+// Interface for Wallet Hook State
+export interface WalletState {
+  isConnected: boolean;
+  account: string | null;
+  balance: TokenBalance[];
+  connectWallet: () => Promise<void>;
+  disconnectWallet: () => void;
+  loading: boolean;
+  error: string | null;
 }
