@@ -2,7 +2,7 @@ export interface TokenBalance {
   symbol: string;
   name: string;
   balance: number;
-  valueUSD: number;
+  valueUSD?: number; // Made optional as real-time price feed is complex
   logoUrl?: string;
 }
 
@@ -36,9 +36,9 @@ export interface SimulationResult {
   estimatedAPY?: string;
   risksInvolved: string[];
   gasFeeEstimation?: string;
-  aiExplanation?: string;
-  aiSuggestions?: string;
-  aiRationale?: string;
+  aiExplanation?: string; // Expected to be Markdown
+  aiSuggestions?: string; // Expected to be Markdown
+  aiRationale?: string; // Expected to be Markdown
 }
 
 export interface RecentSimulation extends SimulationResult {

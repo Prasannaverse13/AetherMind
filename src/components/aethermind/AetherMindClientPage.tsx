@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useWallet, formatBalanceForAI } from '@/hooks/useWallet';
@@ -5,7 +6,7 @@ import { WalletOverview } from './WalletOverview';
 import { SimulationArea } from './SimulationArea';
 import { DeFiStrategyInfo } from './DeFiStrategyInfo';
 import { Button } from '@/components/ui/button';
-import { Loader2, AlertTriangle } from 'lucide-react';
+import { Loader2, AlertTriangle, WifiOff } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -32,13 +33,13 @@ const generalStrategies = [
 
 
 export function AetherMindClientPage() {
-  const { isConnected, account, balance, connectWallet, loading: walletLoading } = useWallet();
+  const { isConnected, account, balance, connectWallet, loading: walletLoading, error: walletError } = useWallet();
 
-  if (walletLoading && !account) {
+  if (walletLoading && !account && !isConnected) { // Show full page loader only on initial load
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center p-8">
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] text-center p-8">
         <Loader2 className="h-16 w-16 animate-spin text-primary mb-6" />
-        <h2 className="text-3xl font-semibold mb-2">Loading AetherMind...</h2>
+        <h2 className="text-3xl font-semibold mb-2 text-foreground">Loading AetherMind...</h2>
         <p className="text-muted-foreground max-w-md">
           Preparing your intelligent DeFi navigator. Please wait a moment.
         </p>
@@ -49,13 +50,13 @@ export function AetherMindClientPage() {
   return (
     <div className="space-y-12">
       {!isConnected ? (
-        <section className="text-center py-12 md:py-20 bg-gradient-to-br from-background to-accent/20 rounded-xl">
+        <section className="text-center py-12 md:py-20 glass-card">
           <div className="container mx-auto px-4">
             <h2 className="text-4xl md:text-5xl font-bold mb-6 gradient-text">
               Unlock DeFi with AI-Powered Insights
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-10">
-              AetherMind helps you simulate DeFi strategies using real-time OKX DEX data and your portfolio. Connect your wallet to get personalized insights and make smarter financial decisions.
+              AetherMind helps you simulate DeFi strategies using AI insights. Connect your Metamask wallet to get personalized suggestions based on your native token balance and explore DeFi possibilities. OKX DEX data is currently simulated.
             </p>
             <Button
               size="lg"
@@ -70,7 +71,14 @@ export function AetherMindClientPage() {
               )}
               Connect Metamask Wallet
             </Button>
-            <p className="mt-4 text-sm text-muted-foreground">Securely connect to explore possibilities.</p>
+            {walletError && (
+              <p className="mt-4 text-sm text-destructive flex items-center justify-center">
+                <AlertTriangle className="mr-2 h-4 w-4" /> {walletError}
+              </p>
+            )}
+            {!walletError && (
+              <p className="mt-4 text-sm text-muted-foreground">Securely connect to explore possibilities.</p>
+            )}
           </div>
           
           <div className="mt-16 container mx-auto px-4">
@@ -82,9 +90,9 @@ export function AetherMindClientPage() {
             </div>
           </div>
         </section>
-      ) : (
+      ) : account && ( // Ensure account is not null before rendering connected state
         <>
-          <WalletOverview account={account!} balance={balance} />
+          <WalletOverview account={account} balance={balance} />
           <SimulationArea 
             userTokenHoldingsString={formatBalanceForAI(balance)} 
           />
@@ -108,7 +116,7 @@ export function AetherMindClientPage() {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-3xl font-semibold mb-6 text-foreground">Understanding DeFi Risks</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
-            Decentralized Finance offers exciting opportunities but also comes with inherent risks. AetherMind aims to provide clarity, but always do your own research (DYOR) before investing.
+            Decentralized Finance offers exciting opportunities but also comes with inherent risks. AetherMind aims to provide clarity, but always do your own research (DYOR) before investing. Simulation data is for illustrative purposes.
           </p>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
             {[

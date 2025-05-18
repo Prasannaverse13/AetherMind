@@ -61,27 +61,27 @@ body {
     --card: 220 15% 13%; /* Slightly lighter than background for cards */
     --card-foreground: 0 0% 95%;
 
-    --popover: 220 15% 13%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 220 15% 13%; /* Popover base */
+    --popover-foreground: 0 0% 95%; /* Popover text */
 
-    --primary: 213 71% 65%; /* Muted blue, bit more vibrant for dark mode */
-    --primary-foreground: 0 0% 98%; 
+    --primary: 213 71% 75%; /* Muted blue, increased saturation for dark mode visibility #A8C7FA */
+    --primary-foreground: 213 30% 15%; /* Darker blue for text on primary */
 
-    --secondary: 240 20% 25%; /* Darker lavender/blue for secondary elements */
-    --secondary-foreground: 0 0% 95%;
+    --secondary: 240 20% 28%; /* Darker lavender/blue for secondary elements */
+    --secondary-foreground: 0 0% 92%;
 
-    --muted: 220 15% 20%;
-    --muted-foreground: 0 0% 63.9%;
+    --muted: 220 15% 20%; /* Slightly lighter muted for dark mode */
+    --muted-foreground: 0 0% 70%; /* Lighter muted text */
 
-    --accent: 240 40% 60%; /* Lavender accent for dark mode */
-    --accent-foreground: 0 0% 98%;
+    --accent: 240 40% 65%; /* Lavender accent, slightly more vibrant for dark mode */
+    --accent-foreground: 0 0% 98%; /* Text on accent */
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 0 70% 55%; /* Destructive actions, adjusted for dark */
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 15% 25%;
-    --input: 220 15% 22%;
-    --ring: 213 71% 55%;
+    --border: 220 15% 25%; /* Border color */
+    --input: 220 15% 18%; /* Input field background */
+    --ring: 213 71% 60%; /* Ring color based on primary */
 
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
@@ -111,14 +111,49 @@ body {
     display: flex;
     flex-direction: column;
   }
+  /* Ensure headings and strong text are clearly visible in dark mode */
+  .dark h1, .dark h2, .dark h3, .dark h4, .dark h5, .dark h6, .dark strong {
+    @apply text-foreground;
+  }
+  .dark p {
+    @apply text-foreground/90; /* Slightly less emphasis for paragraphs */
+  }
 }
 
 /* Custom glass card style */
 .glass-card {
   @apply bg-card/60 backdrop-blur-lg shadow-xl rounded-2xl border border-card/20;
 }
+.dark .glass-card {
+   @apply bg-card/70 backdrop-blur-md shadow-2xl border-card/30; /* Adjusted for dark theme */
+}
+
 
 /* Custom gradient text */
 .gradient-text {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent;
+}
+
+/* AI Response Text Styling */
+.ai-response-text {
+  @apply whitespace-pre-line leading-relaxed;
+}
+
+.ai-response-text h3 {
+  @apply text-lg font-semibold mt-4 mb-2 text-primary;
+}
+.ai-response-text strong {
+  @apply font-semibold text-foreground;
+}
+.ai-response-text ul {
+  @apply list-disc list-inside pl-2 my-2 space-y-1;
+}
+.ai-response-text ol {
+  @apply list-decimal list-inside pl-2 my-2 space-y-1;
+}
+.ai-response-text li {
+  @apply mb-1;
+}
+.ai-response-text p {
+  @apply mb-2;
 }

@@ -1,18 +1,19 @@
+
 "use client";
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
 import type { DeFiStrategy, DeFiStrategyType, SimulationParams, SimulationResult } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+// import { Textarea } from '@/components/ui/textarea'; // Replaced with div for markdown
 import { Loader2, Wand2, AlertCircle, Info, Zap } from 'lucide-react';
 import { getStrategyExplanation, getPersonalizedSuggestions, getMockOkxMarketConditions } from '@/lib/actions';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import Image from 'next/image';
+// import Image from 'next/image'; // Not used directly here anymore
 
 const strategies: DeFiStrategy[] = [
   {
@@ -53,6 +54,12 @@ export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps)
   const [simulationResult, setSimulationResult] = useState<SimulationResult | null>(null);
   const [isSimulating, startSimulationTransition] = useTransition();
   const [isSuggesting, startSuggestionTransition] = useTransition();
+  const [displayTime, setDisplayTime] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Client-side only effect to display current time, avoiding hydration mismatch
+    setDisplayTime(new Date().toLocaleTimeString());
+  }, [simulationResult]); // Re-render time when simulation result changes to show it's "fresh"
 
   const selectedStrategy = strategies.find(s => s.id === selectedStrategyId);
 
@@ -60,13 +67,12 @@ export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps)
     const strategyId = value as DeFiStrategyType;
     setSelectedStrategyId(strategyId);
     const strategy = strategies.find(s => s.id === strategyId);
-    // Set default params for the selected strategy
     const defaultParams: SimulationParams = {};
     strategy?.parameters.forEach(p => {
       if (p.defaultValue !== undefined) defaultParams[p.id] = p.defaultValue;
     });
     setParams(defaultParams);
-    setSimulationResult(null); // Clear previous results
+    setSimulationResult(null); 
   };
 
   const handleParamChange = (paramId: string, value: string | number) => {
@@ -79,36 +85,33 @@ export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps)
     startSimulationTransition(async () => {
       const marketConditions = await getMockOkxMarketConditions();
       
-      // First, get personalized suggestions based on overall holdings and market
       const suggestionsInput: Parameters<typeof getPersonalizedSuggestions>[0] = {
         userTokenHoldings: userTokenHoldingsString,
         okxDexMarketConditions: marketConditions,
       };
       const aiSuggestions = await getPersonalizedSuggestions(suggestionsInput);
 
-      // Then, get specific explanation for the chosen strategy
       const explanationInput: Parameters<typeof getStrategyExplanation>[0] = {
-        strategy: `${selectedStrategy.name} with parameters: ${JSON.stringify(params)}. Context: ${selectedStrategy.okxContext}. Current market conditions on OKX DEX: ${marketConditions}`,
+        strategy: `${selectedStrategy.name} with parameters: ${JSON.stringify(params)}. Context: ${selectedStrategy.okxContext}. Current market conditions on OKX DEX: ${marketConditions}. User holdings: ${userTokenHoldingsString}`,
       };
       const aiExplanation = await getStrategyExplanation(explanationInput);
 
-      // Mock simulation logic based on AI outputs and strategy type
-      // In a real app, this would involve complex calculations or more specific AI models
       let result: SimulationResult = {
         strategyName: selectedStrategy.name,
         risksInvolved: selectedStrategy.risks,
-        aiExplanation: aiExplanation || "Could not retrieve detailed explanation.",
+        aiExplanation: aiExplanation?.explanation || "Could not retrieve detailed explanation.",
         aiSuggestions: aiSuggestions?.aiSuggestions || "No specific suggestions generated for this exact simulation, consider overall portfolio advice.",
         aiRationale: aiSuggestions?.aiRationale || "Rationale not available.",
-        gasFeeEstimation: "0.01 - 0.05 ETH (estimate)"
+        gasFeeEstimation: "0.01 - 0.05 ETH (estimate based on typical network conditions)" // Mocked
       };
 
+      // Mocked simulation logic (remains mocked as per problem constraints)
       if (selectedStrategy.id === 'yield-farming') {
         result.estimatedAPY = `${(Math.random() * 15 + 5).toFixed(2)}% (AI Projected)`;
-        result.potentialProfit = `~$${(Number(params.amount || 0) * 0.01 * (Math.random() * 1 + 0.5)).toFixed(2)} (Projected for ${params.duration} days)`;
+        result.potentialProfit = `~$${(Number(params.amount || 0) * 0.01 * (Math.random() * 1 + 0.5)).toFixed(2)} (Projected for ${params.duration} days based on mock rates)`;
       } else if (selectedStrategy.id === 'flash-loan') {
-        result.potentialProfit = `~$${(Number(params.borrowAmount || 0) * 0.0005 * (Math.random() * 1 + 0.1)).toFixed(2)} (Potential per arbitrage event)`;
-        result.potentialLoss = "Gas fees if transaction fails or front-run.";
+        result.potentialProfit = `~$${(Number(params.borrowAmount || 0) * 0.0005 * (Math.random() * 1 + 0.1)).toFixed(2)} (Potential per arbitrage event, highly variable)`;
+        result.potentialLoss = "Gas fees if transaction fails or is front-run by bots.";
       }
       
       setSimulationResult(result);
@@ -117,7 +120,7 @@ export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps)
 
   const getAISuggestions = () => {
     startSuggestionTransition(async () => {
-      setSimulationResult(null); // Clear previous specific simulation
+      setSimulationResult(null); 
       const marketConditions = await getMockOkxMarketConditions();
       const suggestionsInput: Parameters<typeof getPersonalizedSuggestions>[0] = {
         userTokenHoldings: userTokenHoldingsString,
@@ -127,18 +130,18 @@ export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps)
       if (aiSuggestions) {
         setSimulationResult({
           strategyName: "Personalized Portfolio Suggestions",
-          risksInvolved: ["Market Volatility", "Smart Contract Risks", "Always DYOR"],
+          risksInvolved: ["Market Volatility", "Smart Contract Risks", "Always DYOR", "AI suggestions are not financial advice"],
           aiSuggestions: aiSuggestions.aiSuggestions,
           aiRationale: aiSuggestions.aiRationale,
-          aiExplanation: "These suggestions are based on your overall portfolio and current market conditions on OKX DEX. Review each carefully."
+          aiExplanation: "These suggestions are generated by AI based on your provided portfolio information and simulated current market conditions on OKX DEX. Review each suggestion carefully and conduct your own research."
         });
       } else {
          setSimulationResult({
           strategyName: "Personalized Portfolio Suggestions",
           risksInvolved: ["Error in generation"],
-          aiSuggestions: "Could not generate suggestions at this time.",
-          aiRationale: "",
-          aiExplanation: "There was an issue contacting the AI for suggestions."
+          aiSuggestions: "Could not generate suggestions at this time. Please try again later.",
+          aiRationale: "Unable to generate rationale due to an error.",
+          aiExplanation: "There was an issue contacting the AI for suggestions. Please check your connection or try again."
         });
       }
     });
@@ -155,10 +158,11 @@ export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps)
                 AI-Powered DeFi Simulator
               </CardTitle>
               <CardDescription className="text-muted-foreground mt-1">
-                Explore DeFi strategies with AI insights tailored to your portfolio and OKX DEX conditions.
+                Explore DeFi strategies with AI insights. OKX DEX data is currently simulated.
+                {displayTime && <span className="block text-xs mt-1">Last activity: {displayTime}</span>}
               </CardDescription>
             </div>
-             <Button onClick={getAISuggestions} disabled={isSuggesting} className="mt-4 md:mt-0 bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 transition-opacity">
+             <Button onClick={getAISuggestions} disabled={isSuggesting || isSimulating} className="mt-4 md:mt-0 bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 transition-opacity">
               {isSuggesting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Zap className="mr-2 h-4 w-4" />}
               Get AI Strategy Suggestions
             </Button>
@@ -167,14 +171,14 @@ export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps)
         <CardContent className="p-6 md:p-8 space-y-8">
           <div className="grid md:grid-cols-2 gap-6 items-start">
             <div>
-              <Label htmlFor="strategy-select" className="text-lg font-semibold mb-2 block">Select DeFi Strategy to Simulate</Label>
+              <Label htmlFor="strategy-select" className="text-lg font-semibold mb-2 block text-foreground">Select DeFi Strategy to Simulate</Label>
               <Select onValueChange={handleStrategyChange} value={selectedStrategyId || ""}>
                 <SelectTrigger id="strategy-select" className="w-full h-12 text-base">
                   <SelectValue placeholder="Choose a strategy..." />
                 </SelectTrigger>
-                <SelectContent className="glass-card">
+                <SelectContent className="glass-card bg-popover text-popover-foreground">
                   {strategies.map(s => (
-                    <SelectItem key={s.id} value={s.id} className="text-base py-2">
+                    <SelectItem key={s.id} value={s.id} className="text-base py-2 focus:bg-accent">
                       {s.name}
                     </SelectItem>
                   ))}
@@ -189,7 +193,7 @@ export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps)
                     <Accordion type="single" collapsible className="w-full mt-2">
                       <AccordionItem value="details" className="border-b-0">
                         <AccordionTrigger className="text-sm py-1 hover:no-underline text-primary hover:text-primary/80">Learn More</AccordionTrigger>
-                        <AccordionContent className="text-xs text-muted-foreground pt-1">
+                        <AccordionContent className="text-xs text-muted-foreground pt-1 prose-sm dark:prose-invert max-w-full">
                           <p className="mb-1">{selectedStrategy.longDescription}</p>
                           <strong>OKX Context:</strong> {selectedStrategy.okxContext}
                         </AccordionContent>
@@ -205,7 +209,7 @@ export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps)
                 <h3 className="text-xl font-semibold mb-3 text-foreground">Strategy Parameters</h3>
                 {selectedStrategy.parameters.map(param => (
                   <div key={param.id} className="space-y-1">
-                    <Label htmlFor={param.id} className="font-medium">{param.label}</Label>
+                    <Label htmlFor={param.id} className="font-medium text-foreground">{param.label}</Label>
                     {param.type === 'number' && (
                       <Input
                         id={param.id}
@@ -226,16 +230,16 @@ export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps)
                         <SelectTrigger id={param.id} className="w-full h-11">
                           <SelectValue placeholder={param.placeholder} />
                         </SelectTrigger>
-                        <SelectContent className="glass-card">
+                        <SelectContent className="glass-card bg-popover text-popover-foreground">
                           {param.options.map(opt => (
-                            <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                            <SelectItem key={opt.value} value={opt.value} className="focus:bg-accent">{opt.label}</SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     )}
                   </div>
                 ))}
-                <Button type="submit" disabled={isSimulating || !selectedStrategy} className="w-full h-12 text-base">
+                <Button type="submit" disabled={isSimulating || !selectedStrategy || isSuggesting} className="w-full h-12 text-base">
                   {isSimulating ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Wand2 className="mr-2 h-5 w-5" />}
                   Run AI Simulation
                 </Button>
@@ -256,37 +260,38 @@ export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps)
                 <CardTitle className="text-2xl font-bold text-foreground">
                   AI Simulation Outcome: <span className="text-primary">{simulationResult.strategyName}</span>
                 </CardTitle>
+                 {displayTime && <CardDescription className="text-xs text-muted-foreground">Generated at: {displayTime}</CardDescription>}
               </CardHeader>
-              <CardContent className="p-6 space-y-4">
+              <CardContent className="p-6 space-y-6">
                 {simulationResult.aiSuggestions && (
                   <div>
-                    <h4 className="text-lg font-semibold mb-1 text-foreground">AI Suggested Strategies:</h4>
-                    <Textarea readOnly value={simulationResult.aiSuggestions} className="h-24 bg-background/30" />
+                    <h4 className="text-lg font-semibold mb-2 text-foreground">AI Suggested Strategies:</h4>
+                    <div className="ai-response-text p-3 bg-background/30 rounded-md max-h-60 overflow-y-auto text-sm" dangerouslySetInnerHTML={{ __html: simulationResult.aiSuggestions.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\* (.*?)(<br \/>|$)/g, '<li>$1</li>').replace(/<li>/g, '<ul><li>').replace(/<\/li>(?!<li>)/g, '</li></ul>').replace(/<ul>(.*?)<\/ul>/gs, (match) => match.replace(/<br \/>/g, ''))  }}></div>
                   </div>
                 )}
                  {simulationResult.aiRationale && (
                   <div>
-                    <h4 className="text-lg font-semibold mb-1 text-foreground">Rationale:</h4>
-                    <Textarea readOnly value={simulationResult.aiRationale} className="h-20 bg-background/30" />
+                    <h4 className="text-lg font-semibold mb-2 text-foreground">Rationale:</h4>
+                     <div className="ai-response-text p-3 bg-background/30 rounded-md max-h-40 overflow-y-auto text-sm" dangerouslySetInnerHTML={{ __html: simulationResult.aiRationale.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }}></div>
                   </div>
                 )}
                 {simulationResult.aiExplanation && (
                   <div>
-                    <h4 className="text-lg font-semibold mb-1 text-foreground">AI Detailed Explanation:</h4>
-                    <Textarea readOnly value={simulationResult.aiExplanation} className="h-28 bg-background/30" />
+                    <h4 className="text-lg font-semibold mb-2 text-foreground">AI Detailed Explanation:</h4>
+                    <div className="ai-response-text p-3 bg-background/30 rounded-md max-h-80 overflow-y-auto text-sm" dangerouslySetInnerHTML={{ __html: simulationResult.aiExplanation.replace(/\n\n/g, '<br /><br />').replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/### (.*?)(<br \/>|$)/g, '<h3>$1</h3>').replace(/\* (.*?)(<br \/>|$)/g, '<li>$1</li>').replace(/(<\/li>|<br \/>)\s*<br \/>\s*(<li>|<h3>)/g, '$1$2').replace(/<li>/g, '<ul><li>').replace(/<\/li>(?!<li>)/g, '</li></ul>').replace(/<ul>(.*?)<\/ul>/gs, (match) => match.replace(/<br \/>/g, '')) }}></div>
                   </div>
                 )}
                 {simulationResult.estimatedAPY && (
-                  <p><strong>Estimated APY:</strong> <span className="text-green-500 font-semibold">{simulationResult.estimatedAPY}</span></p>
+                  <p className="text-foreground"><strong>Estimated APY:</strong> <span className="text-green-400 font-semibold">{simulationResult.estimatedAPY}</span></p>
                 )}
                 {simulationResult.potentialProfit && (
-                  <p><strong>Potential Profit:</strong> <span className="text-green-500 font-semibold">{simulationResult.potentialProfit}</span></p>
+                  <p className="text-foreground"><strong>Potential Profit:</strong> <span className="text-green-400 font-semibold">{simulationResult.potentialProfit}</span></p>
                 )}
                 {simulationResult.potentialLoss && (
-                  <p><strong>Potential Loss:</strong> <span className="text-red-500 font-semibold">{simulationResult.potentialLoss}</span></p>
+                  <p className="text-foreground"><strong>Potential Loss:</strong> <span className="text-red-400 font-semibold">{simulationResult.potentialLoss}</span></p>
                 )}
                  {simulationResult.gasFeeEstimation && (
-                  <p><strong>Gas Fee Estimation:</strong> {simulationResult.gasFeeEstimation}</p>
+                  <p className="text-muted-foreground"><strong>Gas Fee Estimation:</strong> {simulationResult.gasFeeEstimation}</p>
                 )}
                 <div>
                   <h4 className="text-lg font-semibold mb-1 text-foreground">Key Risks:</h4>
@@ -294,11 +299,11 @@ export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps)
                     {simulationResult.risksInvolved.map(risk => <li key={risk}>{risk}</li>)}
                   </ul>
                 </div>
-                <Alert variant="destructive" className="mt-6 bg-destructive/10 border-destructive/20">
+                <Alert variant="destructive" className="mt-6 bg-destructive/20 border-destructive/50 text-destructive-foreground">
                   <AlertCircle className="h-4 w-4 text-destructive" />
                   <AlertTitle className="text-destructive">Disclaimer</AlertTitle>
                   <AlertDescription className="text-destructive/80 text-xs">
-                    This simulation is powered by AI and based on mock data for demonstration purposes. It is not financial advice. Always do your own research (DYOR) before making any investment decisions. DeFi involves significant risks.
+                    This simulation is powered by AI and based on mock data for demonstration purposes. It is not financial advice. Always do your own research (DYOR) before making any investment decisions. DeFi involves significant risks. Real-time OKX DEX data integration is pending.
                   </AlertDescription>
                 </Alert>
               </CardContent>

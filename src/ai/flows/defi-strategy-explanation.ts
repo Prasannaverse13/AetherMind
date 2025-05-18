@@ -17,7 +17,7 @@ const ExplainDefiStrategyInputSchema = z.object({
 export type ExplainDefiStrategyInput = z.infer<typeof ExplainDefiStrategyInputSchema>;
 
 const ExplainDefiStrategyOutputSchema = z.object({
-  explanation: z.string().describe('A clear and concise explanation of the DeFi strategy, including mechanics and risks.'),
+  explanation: z.string().describe('A clear and concise explanation of the DeFi strategy, including mechanics and risks. Format the output using Markdown (e.g., use headings like "### Title", lists with asterisks like "* item", and bold text with double asterisks like "**bold text**").'),
 });
 export type ExplainDefiStrategyOutput = z.infer<typeof ExplainDefiStrategyOutputSchema>;
 
@@ -29,7 +29,16 @@ const prompt = ai.definePrompt({
   name: 'explainDefiStrategyPrompt',
   input: {schema: ExplainDefiStrategyInputSchema},
   output: {schema: ExplainDefiStrategyOutputSchema},
-  prompt: `You are a DeFi expert. Explain the following DeFi strategy to the user, including the mechanics and potential risks involved, so that they can make informed decisions:\n\nStrategy: {{{strategy}}}`,
+  prompt: `You are a DeFi expert. Explain the following DeFi strategy to the user in detail.
+  Your explanation should cover:
+  1.  **Mechanics**: How does this strategy work? What are the steps involved?
+  2.  **Potential Risks**: What are the common risks associated with this strategy (e.g., impermanent loss, smart contract vulnerabilities, liquidation, market volatility)? Explain each risk clearly.
+  3.  **Considerations for OKX DEX**: If relevant, how might this strategy apply or differ on OKX DEX?
+  4.  **Before Proceeding**: What key things should a user research or consider before engaging in this strategy?
+
+  Present the information in a structured and easy-to-understand manner. Use Markdown formatting for headings, lists, and bold text to improve readability.
+
+  Strategy: {{{strategy}}}`,
 });
 
 const explainDefiStrategyFlow = ai.defineFlow(
