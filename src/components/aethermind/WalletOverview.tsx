@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Image from 'next/image';
-import { Wallet, Copy, RefreshCw, AlertCircle, Loader2, Network as NetworkIcon, Coins } from 'lucide-react'; // Renamed Network to NetworkIcon
+import { Wallet, Copy, RefreshCw, AlertCircle, Loader2, Network as NetworkIcon, Coins } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface WalletOverviewProps {
@@ -36,23 +36,9 @@ export function WalletOverview({ account, balance, networkName, onRefresh, isLoa
     }
   };
   
-  let totalPortfolioValueDisplay: React.ReactNode;
-  if (isLoading && balance.length === 0) {
-     totalPortfolioValueDisplay = <p className="text-2xl font-bold text-primary flex items-center"><Loader2 className="h-6 w-6 animate-spin mr-2" /> Loading...</p>;
-  } else if (balance.length === 0 && !isLoading) {
-    totalPortfolioValueDisplay = <p className="text-lg font-semibold text-muted-foreground">N/A (No token balances found)</p>;
-  } else if (balance.length > 0 && balance.every(t => t.valueUSD === undefined)) {
-    totalPortfolioValueDisplay = (
-      <div>
-        <p className="text-2xl font-bold text-primary">Value N/A</p>
-        <p className="text-xs font-normal text-muted-foreground mt-1">(Price data missing for all tokens)</p>
-      </div>
-    );
-  } else { 
-    totalPortfolioValueDisplay = <p className="text-3xl font-extrabold text-primary">
-      ${totalValueUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-    </p>;
-  }
+  // Determine if the "Total Estimated Value" section should be shown at all
+  // It should NOT be shown if balances exist but ALL of them are missing USD price data.
+  const hideTotalValueSectionDueToAllPricesMissing = balance.length > 0 && balance.every(t => t.valueUSD === undefined);
 
   return (
     <section id="wallet-overview">
@@ -94,10 +80,23 @@ export function WalletOverview({ account, balance, networkName, onRefresh, isLoa
             )}
           </div>
 
-          <div className="glass-card !bg-card/50 p-4 rounded-lg">
-            <p className="text-xs text-muted-foreground mb-1">Total Estimated Value</p>
-            {totalPortfolioValueDisplay}
-          </div>
+          {!hideTotalValueSectionDueToAllPricesMissing && (
+            <div className="glass-card !bg-card/50 p-4 rounded-lg">
+              <p className="text-xs text-muted-foreground mb-1">Total Estimated Value</p>
+              {isLoading && balance.length === 0 ? (
+                <div className="flex items-center">
+                  <Loader2 className="h-6 w-6 animate-spin mr-2 text-primary" />
+                  <p className="text-lg font-semibold text-primary">Loading...</p>
+                </div>
+              ) : balance.length === 0 && !isLoading ? (
+                <p className="text-lg font-semibold text-muted-foreground">N/A (No token balances found)</p>
+              ) : ( // This case now implies balance.length > 0 AND NOT all valueUSD are undefined
+                <p className="text-3xl font-extrabold text-primary">
+                  ${totalValueUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </p>
+              )}
+            </div>
+          )}
           
           <div>
             <h3 className="text-lg font-semibold text-foreground mb-2 flex items-center"><Coins className="mr-2 h-5 w-5 text-primary" /> Token Balances</h3>
@@ -154,4 +153,3 @@ export function WalletOverview({ account, balance, networkName, onRefresh, isLoa
     </section>
   );
 }
-
