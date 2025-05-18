@@ -43,23 +43,22 @@ const riskInfo = [
 ];
 
 export function AetherMindClientPage() {
-  const { isConnected, account, balance, connectWallet, loading: walletLoading, error: walletError } = useWallet();
+  const { isConnected, account, balance, networkName, connectWallet, loading: walletLoading, error: walletError, refreshBalance } = useWallet();
   const [recentSimulations, setRecentSimulations] = useState<RecentSimulation[]>([]);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-    const storedSimulations = localStorage.getItem('aethermind_recent_simulations');
-    if (storedSimulations) {
-      try {
+    try {
+      const storedSimulations = localStorage.getItem('aethermind_recent_simulations');
+      if (storedSimulations) {
         const parsedSimulations = JSON.parse(storedSimulations);
         if (Array.isArray(parsedSimulations)) {
-          // Validate and transform each simulation item
           const validSimulations = parsedSimulations
             .filter(sim => typeof sim === 'object' && sim !== null && sim.id && sim.timestamp)
             .map(sim => ({
               ...sim,
-              timestamp: new Date(sim.timestamp), // Ensure timestamp is a Date object
+              timestamp: new Date(sim.timestamp), 
             }));
           setRecentSimulations(validSimulations as RecentSimulation[]);
         } else {
@@ -67,20 +66,32 @@ export function AetherMindClientPage() {
           localStorage.removeItem('aethermind_recent_simulations');
           setRecentSimulations([]);
         }
-      } catch (e) {
-        console.error("Failed to parse recent simulations from localStorage", e);
-        localStorage.removeItem('aethermind_recent_simulations');
-        setRecentSimulations([]);
       }
+    } catch (e) {
+      console.error("Failed to parse or access recent simulations from localStorage", e);
+      // Optionally clear corrupted data
+      try {
+        localStorage.removeItem('aethermind_recent_simulations');
+      } catch (removeError) {
+        console.error("Failed to remove corrupted simulations from localStorage", removeError);
+      }
+      setRecentSimulations([]);
     }
   }, []);
 
   useEffect(() => {
-    if (isClient && recentSimulations.length > 0) {
-      localStorage.setItem('aethermind_recent_simulations', JSON.stringify(recentSimulations));
-    } else if (isClient && recentSimulations.length === 0) {
-      // Optional: Clear localStorage if simulations array becomes empty and you want to reflect that
-      // localStorage.removeItem('aethermind_recent_simulations');
+    if (isClient) {
+      try {
+        if (recentSimulations.length > 0) {
+          localStorage.setItem('aethermind_recent_simulations', JSON.stringify(recentSimulations));
+        } else {
+          // If you want to explicitly remove when empty:
+          // localStorage.removeItem('aethermind_recent_simulations');
+        }
+      } catch (e) {
+        console.error("Failed to save recent simulations to localStorage", e);
+        // Handle potential errors like storage quota exceeded
+      }
     }
   }, [recentSimulations, isClient]);
 
@@ -164,7 +175,7 @@ export function AetherMindClientPage() {
         </section>
       ) : account && (
         <>
-          <WalletOverview account={account} balance={balance} />
+          <WalletOverview account={account} balance={balance} networkName={networkName} onRefresh={refreshBalance} isLoading={walletLoading} />
           <SimulationArea
             userTokenHoldingsString={formatBalanceForAI(balance)}
             onSimulationComplete={handleNewSimulation}
@@ -277,3 +288,5 @@ export function AetherMindClientPage() {
     </div>
   );
 }
+
+    
