@@ -49,32 +49,53 @@ export function AetherMindClientPage() {
 
   useEffect(() => {
     setIsClient(true);
-    // Load recent simulations from localStorage if available
     const storedSimulations = localStorage.getItem('aethermind_recent_simulations');
     if (storedSimulations) {
-      setRecentSimulations(JSON.parse(storedSimulations));
+      try {
+        const parsedSimulations = JSON.parse(storedSimulations);
+        if (Array.isArray(parsedSimulations)) {
+          // Validate and transform each simulation item
+          const validSimulations = parsedSimulations
+            .filter(sim => typeof sim === 'object' && sim !== null && sim.id && sim.timestamp)
+            .map(sim => ({
+              ...sim,
+              timestamp: new Date(sim.timestamp), // Ensure timestamp is a Date object
+            }));
+          setRecentSimulations(validSimulations as RecentSimulation[]);
+        } else {
+          console.warn("Stored simulations data is not an array, clearing.");
+          localStorage.removeItem('aethermind_recent_simulations');
+          setRecentSimulations([]);
+        }
+      } catch (e) {
+        console.error("Failed to parse recent simulations from localStorage", e);
+        localStorage.removeItem('aethermind_recent_simulations');
+        setRecentSimulations([]);
+      }
     }
   }, []);
 
   useEffect(() => {
-    // Save recent simulations to localStorage whenever they change
     if (isClient && recentSimulations.length > 0) {
       localStorage.setItem('aethermind_recent_simulations', JSON.stringify(recentSimulations));
+    } else if (isClient && recentSimulations.length === 0) {
+      // Optional: Clear localStorage if simulations array becomes empty and you want to reflect that
+      // localStorage.removeItem('aethermind_recent_simulations');
     }
   }, [recentSimulations, isClient]);
 
 
   const handleNewSimulation = (simulationResult: SimulationResult, inputParams: SimulationParams) => {
     const newRecentSimulation: RecentSimulation = {
-      id: new Date().toISOString() + Math.random().toString(36).substring(2,9), 
+      id: new Date().toISOString() + Math.random().toString(36).substring(2,9),
       timestamp: new Date(),
-      inputs: inputParams, // inputParams already includes riskProfile if set
+      inputs: inputParams,
       ...simulationResult,
     };
-    setRecentSimulations(prev => [newRecentSimulation, ...prev.slice(0, 4)]); // Keep last 5
+    setRecentSimulations(prev => [newRecentSimulation, ...prev.slice(0, 4)]);
   };
-  
-  if (!isClient) { 
+
+  if (!isClient) {
      return (
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] text-center p-8">
         <Loader2 className="h-16 w-16 animate-spin text-primary mb-6" />
@@ -86,7 +107,7 @@ export function AetherMindClientPage() {
     );
   }
 
-  if (walletLoading && !account && !isConnected && isClient) { 
+  if (walletLoading && !account && !isConnected && isClient) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] text-center p-8">
         <Loader2 className="h-16 w-16 animate-spin text-primary mb-6" />
@@ -131,7 +152,7 @@ export function AetherMindClientPage() {
               <p className="mt-4 text-sm text-muted-foreground">Securely connect to explore possibilities.</p>
             )}
           </div>
-          
+
           <div className="mt-16 container mx-auto px-4">
             <h3 className="text-2xl font-semibold mb-8 text-foreground">Popular DeFi Strategies Explained</h3>
             <div className="grid md:grid-cols-3 gap-8">
@@ -141,10 +162,10 @@ export function AetherMindClientPage() {
             </div>
           </div>
         </section>
-      ) : account && ( 
+      ) : account && (
         <>
           <WalletOverview account={account} balance={balance} />
-          <SimulationArea 
+          <SimulationArea
             userTokenHoldingsString={formatBalanceForAI(balance)}
             onSimulationComplete={handleNewSimulation}
           />
@@ -174,7 +195,7 @@ export function AetherMindClientPage() {
                           <h4 className="font-semibold text-foreground">Inputs:</h4>
                           <ul className="list-disc list-inside text-muted-foreground pl-2">
                             {Object.entries(sim.inputs).map(([key, value]) => {
-                              if (key === 'type' && value === 'generalAISuggestion' && sim.strategyName === "Personalized Portfolio Suggestions") return null; // Don't show 'type: generalAISuggestion' for these
+                              if (key === 'type' && value === 'generalAISuggestion' && sim.strategyName === "Personalized Portfolio Suggestions") return null;
                               const formattedKey = key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase());
                               return (
                                 <li key={key}><span className="capitalize">{formattedKey}:</span> {String(value)}</li>
@@ -186,23 +207,23 @@ export function AetherMindClientPage() {
                         {sim.estimatedAPY && <p><strong>Estimated APY:</strong> <span className="text-green-400">{sim.estimatedAPY}</span></p>}
                         {sim.potentialLoss && <p><strong>Potential Loss:</strong> <span className="text-red-400">{sim.potentialLoss}</span></p>}
                         {sim.gasFeeEstimation && <p className="text-muted-foreground"><strong>Gas Fee Est:</strong> {sim.gasFeeEstimation}</p>}
-                        
+
                         {sim.aiSuggestions && (
                           <div>
                             <h4 className="font-semibold text-foreground mt-2">AI Suggestions:</h4>
-                            <div className="ai-response-text p-2 bg-background/50 rounded-md max-h-40 overflow-y-auto text-xs" dangerouslySetInnerHTML={{ __html: sim.aiSuggestions }}></div>
+                            <div className="ai-response-text p-2 bg-background/50 rounded-md max-h-40 overflow-y-auto text-xs" dangerouslySetInnerHTML={{ __html: sim.aiSuggestions || '' }}></div>
                           </div>
                         )}
                         {sim.aiRationale && (
                           <div>
                             <h4 className="font-semibold text-foreground mt-2">AI Rationale:</h4>
-                            <div className="ai-response-text p-2 bg-background/50 rounded-md max-h-40 overflow-y-auto text-xs" dangerouslySetInnerHTML={{ __html: sim.aiRationale }}></div>
+                            <div className="ai-response-text p-2 bg-background/50 rounded-md max-h-40 overflow-y-auto text-xs" dangerouslySetInnerHTML={{ __html: sim.aiRationale || '' }}></div>
                           </div>
                         )}
                          {sim.aiExplanation && sim.strategyName !== "Personalized Portfolio Suggestions" && (
                           <div>
                             <h4 className="font-semibold text-foreground mt-2">AI Explanation for {sim.strategyName}:</h4>
-                            <div className="ai-response-text p-2 bg-background/50 rounded-md max-h-60 overflow-y-auto text-xs" dangerouslySetInnerHTML={{ __html: sim.aiExplanation }}></div>
+                            <div className="ai-response-text p-2 bg-background/50 rounded-md max-h-60 overflow-y-auto text-xs" dangerouslySetInnerHTML={{ __html: sim.aiExplanation || '' }}></div>
                           </div>
                         )}
                         <div>
