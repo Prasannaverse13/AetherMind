@@ -5,8 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Image from 'next/image';
-import { Wallet, Copy, RefreshCw, AlertCircle, Loader2, Network as NetworkIcon, Coins } from 'lucide-react';
+import { Wallet, Copy, RefreshCw, AlertCircle, Loader2, Coins, Network as NetworkIcon } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { TrendingDeFiNewsCard } from './TrendingDeFiNewsCard';
 
 interface WalletOverviewProps {
   account: string | null;
@@ -22,6 +23,9 @@ export function WalletOverview({ account, balance, networkName, onRefresh, isLoa
   const shortAccount = account ? `${account.substring(0, 6)}...${account.substring(account.length - 4)}` : "N/A";
   
   const totalValueUSD = balance.reduce((sum, token) => sum + (token.valueUSD || 0), 0);
+  const hasAnyPriceData = balance.some(token => typeof token.valueUSD === 'number');
+  const hideTotalValueSectionDueToAllPricesMissing = balance.length > 0 && balance.every(t => t.valueUSD === undefined);
+
 
   const handleCopyAddress = () => {
     if (account) {
@@ -36,9 +40,33 @@ export function WalletOverview({ account, balance, networkName, onRefresh, isLoa
     }
   };
   
-  // Determine if the "Total Estimated Value" section should be shown at all
-  // It should NOT be shown if balances exist but ALL of them are missing USD price data.
-  const hideTotalValueSectionDueToAllPricesMissing = balance.length > 0 && balance.every(t => t.valueUSD === undefined);
+  let totalPortfolioValueDisplay;
+  if (isLoading && balance.length === 0) {
+    totalPortfolioValueDisplay = (
+      <div className="flex items-center">
+        <Loader2 className="h-6 w-6 animate-spin mr-2 text-primary" />
+        <p className="text-lg font-semibold text-primary">Loading...</p>
+      </div>
+    );
+  } else if (balance.length === 0 && !isLoading) {
+    totalPortfolioValueDisplay = <p className="text-xl font-semibold text-muted-foreground">N/A (No token balances found)</p>;
+  } else if (hasAnyPriceData) {
+     totalPortfolioValueDisplay = (
+        <div>
+          <p className="text-3xl font-extrabold text-primary">
+            ${totalValueUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </p>
+          {!hideTotalValueSectionDueToAllPricesMissing && totalValueUSD === 0 && balance.length > 0 && (
+             <p className="text-sm font-normal text-muted-foreground">(Total may be $0 if price data is missing for some tokens)</p>
+          )}
+        </div>
+      );
+  } else {
+    // This case implies balance.length > 0 AND all valueUSD are undefined.
+    // The section will be hidden due to hideTotalValueSectionDueToAllPricesMissing
+    totalPortfolioValueDisplay = null; 
+  }
+
 
   return (
     <section id="wallet-overview">
@@ -58,47 +86,38 @@ export function WalletOverview({ account, balance, networkName, onRefresh, isLoa
           </div>
         </CardHeader>
         <CardContent className="px-0 pb-0 space-y-4">
-          <div className="glass-card !bg-card/50 p-4 rounded-lg space-y-3">
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">Connected Account</p>
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-mono text-foreground truncate" title={account || "Not Connected"}>{shortAccount}</p>
-                {account && (
-                  <Button variant="ghost" size="icon" onClick={handleCopyAddress} className="h-7 w-7" title="Copy address">
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
-            </div>
-            {networkName && networkName !== "Unknown Network" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="glass-card !bg-card/50 p-4 rounded-lg space-y-3">
               <div>
-                <p className="text-xs text-muted-foreground mb-1">Network</p>
-                <div className="flex items-center text-sm text-foreground">
-                  <NetworkIcon className="h-4 w-4 mr-2 text-primary" /> {networkName}
+                <p className="text-xs text-muted-foreground mb-1">Connected Account</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-mono text-foreground truncate" title={account || "Not Connected"}>{shortAccount}</p>
+                  {account && (
+                    <Button variant="ghost" size="icon" onClick={handleCopyAddress} className="h-7 w-7" title="Copy address">
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  )}
                 </div>
+              </div>
+              {networkName && networkName !== "Unknown Network" && (
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">Network</p>
+                  <div className="flex items-center text-sm text-foreground">
+                    <NetworkIcon className="h-4 w-4 mr-2 text-primary" /> {networkName}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {!hideTotalValueSectionDueToAllPricesMissing && totalPortfolioValueDisplay && (
+              <div className="glass-card !bg-card/50 p-4 rounded-lg">
+                <p className="text-xs text-muted-foreground mb-1">Total Estimated Value</p>
+                {totalPortfolioValueDisplay}
               </div>
             )}
           </div>
-
-          {!hideTotalValueSectionDueToAllPricesMissing && (
-            <div className="glass-card !bg-card/50 p-4 rounded-lg">
-              <p className="text-xs text-muted-foreground mb-1">Total Estimated Value</p>
-              {isLoading && balance.length === 0 ? (
-                <div className="flex items-center">
-                  <Loader2 className="h-6 w-6 animate-spin mr-2 text-primary" />
-                  <p className="text-lg font-semibold text-primary">Loading...</p>
-                </div>
-              ) : balance.length === 0 && !isLoading ? (
-                <p className="text-lg font-semibold text-muted-foreground">N/A (No token balances found)</p>
-              ) : ( // This case now implies balance.length > 0 AND NOT all valueUSD are undefined
-                <p className="text-3xl font-extrabold text-primary">
-                  ${totalValueUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </p>
-              )}
-            </div>
-          )}
           
-          <div>
+          <div className="mt-4">
             <h3 className="text-lg font-semibold text-foreground mb-2 flex items-center"><Coins className="mr-2 h-5 w-5 text-primary" /> Token Balances</h3>
             {isLoading && balance.length === 0 ? (
               <div className="text-center py-6 text-muted-foreground">
@@ -147,7 +166,7 @@ export function WalletOverview({ account, balance, networkName, onRefresh, isLoa
               Currently, only native currency balance is displayed. Full token discovery is a future enhancement.
             </p>
           </div>
-
+          <TrendingDeFiNewsCard />
         </CardContent>
       </Card>
     </section>
