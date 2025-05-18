@@ -18,6 +18,22 @@ export function WalletOverview({ account, balance }: WalletOverviewProps) {
   const totalValueUSD = balance.reduce((sum, token) => sum + (token.valueUSD || 0), 0);
   const shortAccount = account ? `${account.substring(0, 6)}...${account.substring(account.length - 4)}` : "N/A";
 
+  let totalPortfolioValueDisplay: React.ReactNode;
+  if (balance.length === 0 && !walletLoading) {
+    totalPortfolioValueDisplay = <p className="text-3xl font-bold text-primary">N/A (No token balances)</p>;
+  } else if (walletLoading && balance.length === 0) {
+     totalPortfolioValueDisplay = <p className="text-3xl font-bold text-primary">Loading...</p>;
+  } else if (balance.length > 0 && totalValueUSD > 0) {
+    totalPortfolioValueDisplay = <p className="text-4xl font-extrabold text-primary">
+      ${totalValueUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+    </p>;
+  } else { // balance.length > 0 && totalValueUSD === 0 (meaning all valueUSD are undefined or 0)
+    totalPortfolioValueDisplay = <p className="text-xl font-semibold text-primary">
+      Balances available <span className="block text-sm font-normal">(USD price data unavailable)</span>
+    </p>;
+  }
+
+
   return (
     <section id="wallet-overview">
       <Card className="glass-card p-2 md:p-4 overflow-hidden">
@@ -32,14 +48,9 @@ export function WalletOverview({ account, balance }: WalletOverviewProps) {
                 Connected Account: {shortAccount}
               </CardDescription>
             </div>
-            <div className="text-right bg-primary/10 p-3 rounded-lg shadow-inner min-w-[200px]">
-                <p className="text-sm text-primary font-medium">Total Portfolio Value</p>
-                <p className="text-3xl font-bold text-primary">
-                  {balance.length > 0 && totalValueUSD > 0 ? 
-                    `$${totalValueUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                    : (balance.length > 0 && totalValueUSD === 0 ? "$0.00 (Price data unavailable)" : "N/A (No balances or price data)")
-                  }
-                </p>
+            <div className="text-right bg-primary/10 p-3 rounded-lg shadow-inner min-w-[240px] mt-4 sm:mt-0">
+                <p className="text-sm text-primary font-medium mb-1">Total Portfolio Value</p>
+                {totalPortfolioValueDisplay}
             </div>
           </div>
         </CardHeader>
