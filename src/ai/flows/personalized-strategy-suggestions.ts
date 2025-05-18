@@ -25,10 +25,10 @@ export type PersonalizedStrategySuggestionsInput = z.infer<typeof PersonalizedSt
 const PersonalizedStrategySuggestionsOutputSchema = z.object({
   suggestedStrategies: z
     .string()
-    .describe('A list of 3-5 suggested DeFi strategies on OKX DEX, personalized to the user. Format as a Markdown numbered list (e.g., "1. **Strategy Name:** Description..."). Include specific examples like token amounts if applicable.'),
+    .describe('A list of 3-5 suggested DeFi strategies on OKX DEX, personalized to the user. Format as an HTML ordered list (e.g., "<ol><li><strong>Strategy Name:</strong> Description...</li></ol>"). Include specific examples like token amounts if applicable.'),
   rationale: z
     .string()
-    .describe('The rationale behind the suggested strategies, considering the user holdings, market conditions, and risk profile. Format as a Markdown paragraph, possibly using bold text for emphasis.'),
+    .describe('The rationale behind the suggested strategies, considering the user holdings, market conditions, and risk profile. Format as HTML paragraphs using `<p>` tags, possibly using `<strong>` for emphasis. Ensure it is a valid HTML string.'),
 });
 export type PersonalizedStrategySuggestionsOutput = z.infer<typeof PersonalizedStrategySuggestionsOutputSchema>;
 
@@ -48,16 +48,16 @@ const prompt = ai.definePrompt({
   {{#if riskProfile}}User Risk Profile: {{{riskProfile}}}{{/if}}
 
   Please provide:
-  1.  **Suggested Strategies**: A list of 3-5 specific DeFi strategies suitable for the user on OKX DEX. For each strategy, briefly explain it and, where appropriate, suggest example allocations based on their holdings (e.g., "Allocate X amount of Y token..."). Format this as a Markdown numbered list.
+  1.  **Suggested Strategies**: A list of 3-5 specific DeFi strategies suitable for the user on OKX DEX. For each strategy, briefly explain it and, where appropriate, suggest example allocations based on their holdings (e.g., "Allocate X amount of Y token..."). Format this as an HTML ordered list (e.g., "<ol><li><strong>Strategy Name:</strong> Description...</li></ol>").
   2.  **Rationale**: A concise explanation for why these strategies are being recommended, considering their portfolio, the market conditions, potential yield, risk (impermanent loss, liquidation risk), gas fees, {{#if riskProfile}}and importantly, their stated risk profile: '{{{riskProfile}}}'.
       *   If 'conservative', prioritize capital preservation and stable, lower-risk yields (e.g., lending stablecoins, staking well-established assets).
       *   If 'balanced', suggest a mix of strategies, some for stability and some for moderate growth with acceptable risk.
       *   If 'aggressive', include options with higher potential returns, even if they come with higher volatility or newer protocols (always with clear risk warnings).
-      Acknowledge the risk profile in your rationale.{{else}}and general best practices.{{/if}} Format this as a Markdown paragraph.
+      Acknowledge the risk profile in your rationale.{{else}}and general best practices.{{/if}} Format this as HTML, using <p> tags for paragraphs and <strong> for emphasis.
 
   Prioritize strategies that align with the user's existing assets, the provided market conditions, {{#if riskProfile}}and their selected risk profile.{{else}}and general best practices.{{/if}}
-  Ensure your output uses Markdown for lists and bolding to improve readability.
-  Example for a suggested strategy: "1. **ETH Staking on OKX PoolX:** Stake a portion of your ETH (e.g., 1 ETH) in OKX PoolX to earn steady returns. This is generally lower risk..."
+  Ensure your output uses basic HTML tags (e.g. <p>, <strong>, <ul>, <ol>, <li>) for lists, paragraphs, and bolding to improve readability. Do not output raw Markdown.
+  Example for a suggested strategy list item: "<li><strong>ETH Staking on OKX PoolX:</strong> Stake a portion of your ETH (e.g., 1 ETH) in OKX PoolX to earn steady returns. This is generally lower risk...</li>"
   `,
 });
 
@@ -72,3 +72,4 @@ const personalizedStrategySuggestionsFlow = ai.defineFlow(
     return output!;
   }
 );
+

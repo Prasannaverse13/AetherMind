@@ -19,18 +19,21 @@ export function WalletOverview({ account, balance }: WalletOverviewProps) {
   const shortAccount = account ? `${account.substring(0, 6)}...${account.substring(account.length - 4)}` : "N/A";
 
   let totalPortfolioValueDisplay: React.ReactNode;
-  if (balance.length === 0 && !walletLoading) {
-    totalPortfolioValueDisplay = <p className="text-3xl font-bold text-primary">N/A (No token balances)</p>;
-  } else if (walletLoading && balance.length === 0) {
+  if (walletLoading && balance.length === 0) {
      totalPortfolioValueDisplay = <p className="text-3xl font-bold text-primary">Loading...</p>;
-  } else if (balance.length > 0 && totalValueUSD > 0) {
+  } else if (balance.length === 0 && !walletLoading) {
+    totalPortfolioValueDisplay = <p className="text-xl font-semibold text-primary">N/A (No token balances)</p>;
+  } else if (totalValueUSD > 0) { 
     totalPortfolioValueDisplay = <p className="text-4xl font-extrabold text-primary">
       ${totalValueUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
     </p>;
-  } else { // balance.length > 0 && totalValueUSD === 0 (meaning all valueUSD are undefined or 0)
-    totalPortfolioValueDisplay = <p className="text-xl font-semibold text-primary">
-      Balances available <span className="block text-sm font-normal">(USD price data unavailable)</span>
-    </p>;
+  } else { // balance.length > 0 && totalValueUSD === 0 (meaning all valueUSD are undefined or 0 for the sum)
+    totalPortfolioValueDisplay = (
+      <div>
+        <p className="text-4xl font-extrabold text-primary">$0.00</p>
+        <p className="text-sm font-normal text-muted-foreground mt-1">(Price data unavailable for total)</p>
+      </div>
+    );
   }
 
 
@@ -115,3 +118,4 @@ export function WalletOverview({ account, balance }: WalletOverviewProps) {
     </section>
   );
 }
+

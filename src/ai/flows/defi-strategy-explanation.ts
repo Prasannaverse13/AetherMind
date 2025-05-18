@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -17,7 +18,7 @@ const ExplainDefiStrategyInputSchema = z.object({
 export type ExplainDefiStrategyInput = z.infer<typeof ExplainDefiStrategyInputSchema>;
 
 const ExplainDefiStrategyOutputSchema = z.object({
-  explanation: z.string().describe('A clear and concise explanation of the DeFi strategy, including mechanics and risks. Format the output using Markdown (e.g., use headings like "### Title", lists with asterisks like "* item", and bold text with double asterisks like "**bold text**").'),
+  explanation: z.string().describe('A clear and concise explanation of the DeFi strategy, including mechanics and risks. Format your explanation using basic HTML: use `<h3>` for section titles, `<strong>` for bold text, and `<ul>` or `<ol>` with `<li>` for lists. Paragraphs should be wrapped in `<p>` tags. Example: "<h3>Mechanics</h3><p>Strategy works by...</p><ul><li>Step 1</li></ul>". Do not use Markdown syntax like "###" or "**".'),
 });
 export type ExplainDefiStrategyOutput = z.infer<typeof ExplainDefiStrategyOutputSchema>;
 
@@ -36,7 +37,7 @@ const prompt = ai.definePrompt({
   3.  **Considerations for OKX DEX**: If relevant, how might this strategy apply or differ on OKX DEX?
   4.  **Before Proceeding**: What key things should a user research or consider before engaging in this strategy?
 
-  Present the information in a structured and easy-to-understand manner. Use Markdown formatting for headings, lists, and bold text to improve readability.
+  Present the information in a structured and easy-to-understand manner. Use basic HTML tags for headings (<h3>), lists (<ul>, <ol>, <li>), paragraphs (<p>), and bold text (<strong>) to improve readability. Do not output raw Markdown.
 
   Strategy: {{{strategy}}}`,
 });
@@ -52,3 +53,4 @@ const explainDefiStrategyFlow = ai.defineFlow(
     return output!;
   }
 );
+
