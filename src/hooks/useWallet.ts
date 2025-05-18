@@ -2,18 +2,8 @@
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
-import { toast } from '@/hooks/use-toast';
-import type { TokenBalance } from '@/types';
-
-export interface WalletState {
-  isConnected: boolean;
-  account: string | null;
-  balance: TokenBalance[];
-  connectWallet: () => Promise<void>;
-  disconnectWallet: () => void;
-  loading: boolean;
-  error: string | null;
-}
+import { useToast } from '@/hooks/use-toast'; // Ensure this import is present and correct
+import type { TokenBalance, WalletState } from '@/types';
 
 const formatEth = (wei: string): number => {
   if (!wei || typeof wei !== 'string' || !wei.startsWith('0x')) {
@@ -26,9 +16,10 @@ const initialWalletState: WalletState = {
   isConnected: false,
   account: null,
   balance: [],
-  connectWallet: async () => {},
-  disconnectWallet: () => {},
-  loading: false,
+  // These will be replaced by the hook's functions
+  connectWallet: async () => { console.warn("connectWallet called on initial state"); },
+  disconnectWallet: () => { console.warn("disconnectWallet called on initial state"); },
+  loading: true,
   error: null,
 };
 
@@ -37,19 +28,49 @@ export const useWallet = (): WalletState => {
   const [isConnected, setIsConnected] = useState(false);
   const [account, setAccount] = useState<string | null>(null);
   const [balance, setBalance] = useState<TokenBalance[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // This is where the error occurs if useToast is not defined
+  const { toast: showToast } = useToast(); 
 
   useEffect(() => {
     setIsMounted(true);
+    // Attempt to restore connection on mount
+    const attemptConnectionRestore = async () => {
+      if (typeof window.ethereum === 'undefined') {
+        setLoading(false);
+        return;
+      }
+      const storedAccount = typeof localStorage !== 'undefined' ? localStorage.getItem('aethermind_wallet_account') : null;
+      if (storedAccount) {
+        try {
+          const accs = await window.ethereum.request({ method: 'eth_accounts' }) as string[];
+          if (accs.length > 0 && accs.includes(storedAccount)) {
+            setAccount(storedAccount);
+            setIsConnected(true);
+            // Fetch balance for restored account will be triggered by account state change effect
+          } else {
+            if (typeof localStorage !== 'undefined') localStorage.removeItem('aethermind_wallet_account');
+          }
+        } catch (err) {
+          console.error("Error restoring wallet session:", err);
+          if (typeof localStorage !== 'undefined') localStorage.removeItem('aethermind_wallet_account');
+          setError("Failed to restore wallet session.");
+        }
+      }
+      setLoading(false);
+    };
+    attemptConnectionRestore();
   }, []);
 
   const fetchBalance = useCallback(async (currentAccount: string) => {
     if (!isMounted || typeof window.ethereum === 'undefined' || !currentAccount) {
-      if (isMounted) setError("Failed to fetch balance: Invalid parameters.");
+      if (isMounted) setError("Failed to fetch balance: Invalid parameters or Metamask not available.");
+      setBalance([]); // Clear balance on error
       return;
     }
-    // setLoading(true); // Handled by calling functions
+    setLoading(true); // Set loading true when fetching balance
     try {
       const rawBalance = await window.ethereum.request({
         method: 'eth_getBalance',
@@ -57,19 +78,23 @@ export const useWallet = (): WalletState => {
       });
       const nativeBalance = formatEth(rawBalance as string);
       
-      setBalance([{
-        symbol: 'ETH', 
-        name: 'Ethereum',
-        balance: nativeBalance,
-        valueUSD: undefined,
-      }]);
-      setError(null);
+      if (isMounted) {
+        setBalance([{
+          symbol: 'ETH', 
+          name: 'Ethereum',
+          balance: nativeBalance,
+          valueUSD: undefined, 
+        }]);
+        setError(null);
+      }
     } catch (err: any) {
       console.error("Error fetching balance:", err);
-      setError("Failed to fetch balance.");
-      setBalance([]);
+      if (isMounted) {
+        setError("Failed to fetch balance.");
+        setBalance([]);
+      }
     } finally {
-      // setLoading(false); // Handled by calling functions
+      if (isMounted) setLoading(false);
     }
   }, [isMounted]);
 
@@ -81,10 +106,9 @@ export const useWallet = (): WalletState => {
     if (typeof localStorage !== 'undefined') {
       localStorage.removeItem('aethermind_wallet_account');
     }
-    toast({ title: "Wallet Disconnected" });
+    showToast({ title: "Wallet Disconnected" });
     setError(null);
-    // Listener removal is handled by the main useEffect
-  }, [isMounted]);
+  }, [isMounted, showToast]);
 
   const handleAccountsChanged = useCallback((accounts: string[]) => {
     if (!isMounted) return;
@@ -92,23 +116,20 @@ export const useWallet = (): WalletState => {
       disconnectWallet();
     } else if (accounts[0] !== account) {
       const newAccount = accounts[0];
-      setAccount(newAccount);
+      setAccount(newAccount); // This will trigger the useEffect below to fetch balance
       setIsConnected(true); 
-      setLoading(true);
-      fetchBalance(newAccount).finally(() => {
-        if (isMounted) setLoading(false);
-      });
       if (typeof localStorage !== 'undefined') {
         localStorage.setItem('aethermind_wallet_account', newAccount);
       }
+      showToast({ title: "Account Switched", description: `Switched to: ${newAccount.substring(0,6)}...${newAccount.substring(newAccount.length-4)}` });
     }
-  }, [isMounted, account, fetchBalance, disconnectWallet]);
+  }, [isMounted, account, disconnectWallet, showToast]);
 
   const connectWallet = useCallback(async () => {
     if (!isMounted) return;
     if (typeof window.ethereum === 'undefined') {
-      setError("Metamask is not installed. Please install Metamask to connect your wallet.");
-      toast({ title: "Metamask Not Found", description: "Please install Metamask and try again.", variant: "destructive" });
+      setError("Metamask is not installed. Please install Metamask.");
+      showToast({ title: "Metamask Not Found", description: "Please install Metamask and try again.", variant: "destructive" });
       return;
     }
     
@@ -118,113 +139,67 @@ export const useWallet = (): WalletState => {
       const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' }) as string[];
       if (accounts.length > 0) {
         const currentAccount = accounts[0];
-        setAccount(currentAccount);
-        setIsConnected(true); // This will trigger the useEffect to add listeners
-        await fetchBalance(currentAccount);
+        setAccount(currentAccount); // Triggers balance fetch via useEffect
+        setIsConnected(true);
         if (typeof localStorage !== 'undefined') {
           localStorage.setItem('aethermind_wallet_account', currentAccount);
         }
-        toast({ title: "Wallet Connected", description: `Connected to account: ${currentAccount.substring(0,6)}...${currentAccount.substring(currentAccount.length-4)}` });
+        showToast({ title: "Wallet Connected", description: `Connected: ${currentAccount.substring(0,6)}...${currentAccount.substring(currentAccount.length-4)}` });
       } else {
-        setError("No accounts found. Please ensure your Metamask wallet is set up.");
-        toast({ title: "Connection Failed", description: "No accounts found in Metamask.", variant: "destructive" });
+        setError("No accounts found. Please ensure Metamask is set up.");
+        showToast({ title: "Connection Failed", description: "No accounts found in Metamask.", variant: "destructive" });
         setIsConnected(false);
         setAccount(null);
         setBalance([]);
       }
     } catch (err: any) {
       console.error("Error connecting wallet:", err);
-      const errorMessage = err.message || "Failed to connect wallet. User might have rejected the request.";
+      const errorMessage = err.message?.includes("User rejected") ? "Connection request rejected." : "Failed to connect wallet.";
       setError(errorMessage);
-      toast({ title: "Connection Failed", description: errorMessage, variant: "destructive" });
+      showToast({ title: "Connection Failed", description: errorMessage, variant: "destructive" });
       setIsConnected(false);
       setAccount(null);
       setBalance([]);
     } finally {
       if (isMounted) setLoading(false);
     }
-  }, [isMounted, fetchBalance]);
+  }, [isMounted, showToast]);
 
-  // Effect for restoring connection and managing listeners
   useEffect(() => {
-    if (!isMounted || typeof window.ethereum === 'undefined') return;
-
-    let isActive = true; // To prevent state updates on unmounted component
-
-    const attemptConnectionRestore = async () => {
-      setLoading(true);
-      const storedAccount = typeof localStorage !== 'undefined' ? localStorage.getItem('aethermind_wallet_account') : null;
-      if (storedAccount) {
-        try {
-          const accs = await window.ethereum.request({ method: 'eth_accounts' }) as string[];
-          if (isActive && accs.length > 0 && accs.includes(storedAccount)) {
-            setAccount(storedAccount);
-            setIsConnected(true); // This will trigger the listener effect below
-            await fetchBalance(storedAccount);
-          } else if (isActive) {
-            if (typeof localStorage !== 'undefined') localStorage.removeItem('aethermind_wallet_account');
-            setIsConnected(false);
-            setAccount(null);
-            setBalance([]);
-          }
-        } catch (err) {
-          if (isActive) {
-            console.error("Error restoring wallet session:", err);
-            if (typeof localStorage !== 'undefined') localStorage.removeItem('aethermind_wallet_account');
-            setIsConnected(false);
-            setAccount(null);
-            setBalance([]);
-            setError("Failed to restore wallet session.");
-          }
-        }
-      }
-      if (isActive) setLoading(false);
-    };
-
-    if (!isConnected && !account) { // Only attempt restore if not already connected
-      attemptConnectionRestore();
-    } else if (isConnected && account) {
-      // If already connected (e.g. by direct connectWallet call), ensure loading is false
-      setLoading(false);
+    if (isMounted && account && isConnected) {
+      fetchBalance(account);
     }
-    
-    return () => {
-      isActive = false;
-    };
-  }, [isMounted, fetchBalance]); // Dependencies for session restoration
+  }, [isMounted, account, isConnected, fetchBalance]);
 
-  // Effect solely for managing the accountsChanged listener
   useEffect(() => {
     if (!isMounted || typeof window.ethereum === 'undefined' || !window.ethereum.on) {
       return;
     }
-
     let isActive = true;
-    const currentHandler = (accounts: string[]) => {
-      if (isActive) {
-        handleAccountsChanged(accounts);
-      }
+    const accountsChangedHandler = (accounts: string[]) => {
+        if (isActive) handleAccountsChanged(accounts);
     };
 
-    if (isConnected && account) {
-      window.ethereum.on('accountsChanged', currentHandler);
+    if (isConnected) { // Only listen if connected
+        window.ethereum.on('accountsChanged', accountsChangedHandler);
     }
 
     return () => {
       isActive = false;
       if (typeof window.ethereum.removeListener === 'function') {
-        window.ethereum.removeListener('accountsChanged', currentHandler);
+        window.ethereum.removeListener('accountsChanged', accountsChangedHandler);
       }
     };
-  }, [isMounted, isConnected, account, handleAccountsChanged]);
-
-
-  if (!isMounted && typeof window === 'undefined') { // SSR safety check
-    return { ...initialWalletState, loading: true }; // loading true during SSR initial phase
+  }, [isMounted, isConnected, handleAccountsChanged]);
+  
+  if (!isMounted && typeof window === 'undefined') {
+    // SSR fallback, ensure functions are defined but perhaps less functional
+    return { ...initialWalletState, loading: true };
   }
   
-  if (!isMounted) { // Still hydrating on client, show generic loading state
-      return { ...initialWalletState, loading: true, connectWallet: async () => {}, disconnectWallet: () => {} };
+  // While isMounted is false but window is defined (very initial client render before first useEffect)
+  if (!isMounted) {
+      return { ...initialWalletState, loading: true }; // Keep loading true until isMounted
   }
 
   return { isConnected, account, balance, connectWallet, disconnectWallet, loading, error };
