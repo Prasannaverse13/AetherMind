@@ -20,19 +20,19 @@ const generalStrategies = [
     id: 'yield-farming',
     name: 'Yield Farming',
     description: 'Earn rewards by staking or lending your crypto assets in DeFi protocols.',
-    icon: <Image src="https://placehold.co/40x40.png" alt="Yield Farming" width={40} height={40} className="rounded-md" data-ai-hint="abstract finance" />
+    icon: <Image src="https://placehold.co/40x40.png" alt="Yield Farming" width={40} height={40} className="rounded-md" data-ai-hint="abstract finance" unoptimized={true} />
   },
   {
     id: 'flash-loans',
     name: 'Flash Loans',
     description: 'Borrow assets without collateral, provided the loan is repaid within the same transaction block.',
-    icon: <Image src="https://placehold.co/40x40.png" alt="Flash Loans" width={40} height={40} className="rounded-md" data-ai-hint="speed lightning" />
+    icon: <Image src="https://placehold.co/40x40.png" alt="Flash Loans" width={40} height={40} className="rounded-md" data-ai-hint="speed lightning" unoptimized={true} />
   },
   {
     id: 'liquidity-providing',
     name: 'Liquidity Providing',
     description: 'Provide assets to liquidity pools and earn trading fees.',
-    icon: <Image src="https://placehold.co/40x40.png" alt="Liquidity Providing" width={40} height={40} className="rounded-md" data-ai-hint="water pool" />
+    icon: <Image src="https://placehold.co/40x40.png" alt="Liquidity Providing" width={40} height={40} className="rounded-md" data-ai-hint="water pool" unoptimized={true} />
   }
 ];
 
@@ -292,3 +292,4 @@ export function AetherMindClientPage() {
     
 
     
+
