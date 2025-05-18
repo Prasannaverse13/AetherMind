@@ -2,18 +2,16 @@
 "use client";
 
 import { useState, useTransition, useEffect } from 'react';
-import type { DeFiStrategy, DeFiStrategyType, SimulationParams, SimulationResult } from '@/types';
+import type { DeFiStrategy, DeFiStrategyType, SimulationParams, SimulationResult, RecentSimulation } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-// import { Textarea } from '@/components/ui/textarea'; // Replaced with div for markdown
 import { Loader2, Wand2, AlertCircle, Info, Zap } from 'lucide-react';
 import { getStrategyExplanation, getPersonalizedSuggestions, getMockOkxMarketConditions } from '@/lib/actions';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-// import Image from 'next/image'; // Not used directly here anymore
 
 const strategies: DeFiStrategy[] = [
   {
@@ -46,9 +44,10 @@ const strategies: DeFiStrategy[] = [
 
 interface SimulationAreaProps {
   userTokenHoldingsString: string;
+  onSimulationComplete: (simulationResult: SimulationResult, inputParams: SimulationParams) => void;
 }
 
-export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps) {
+export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }: SimulationAreaProps) {
   const [selectedStrategyId, setSelectedStrategyId] = useState<DeFiStrategyType | null>(null);
   const [params, setParams] = useState<SimulationParams>({});
   const [simulationResult, setSimulationResult] = useState<SimulationResult | null>(null);
@@ -57,9 +56,8 @@ export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps)
   const [displayTime, setDisplayTime] = useState<string | null>(null);
 
   useEffect(() => {
-    // Client-side only effect to display current time, avoiding hydration mismatch
     setDisplayTime(new Date().toLocaleTimeString());
-  }, [simulationResult]); // Re-render time when simulation result changes to show it's "fresh"
+  }, [simulationResult]);
 
   const selectedStrategy = strategies.find(s => s.id === selectedStrategyId);
 
@@ -81,6 +79,7 @@ export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps)
 
   const runSimulation = async () => {
     if (!selectedStrategy) return;
+    const currentParams = {...params}; // Capture current params for this simulation run
 
     startSimulationTransition(async () => {
       const marketConditions = await getMockOkxMarketConditions();
@@ -89,10 +88,11 @@ export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps)
         userTokenHoldings: userTokenHoldingsString,
         okxDexMarketConditions: marketConditions,
       };
-      const aiSuggestions = await getPersonalizedSuggestions(suggestionsInput);
+      // We get suggestions, but they are general. The main explanation is for the *selected* strategy.
+      const aiSuggestionsForPortfolio = await getPersonalizedSuggestions(suggestionsInput);
 
       const explanationInput: Parameters<typeof getStrategyExplanation>[0] = {
-        strategy: `${selectedStrategy.name} with parameters: ${JSON.stringify(params)}. Context: ${selectedStrategy.okxContext}. Current market conditions on OKX DEX: ${marketConditions}. User holdings: ${userTokenHoldingsString}`,
+        strategy: `${selectedStrategy.name} with parameters: ${JSON.stringify(currentParams)}. Context: ${selectedStrategy.okxContext}. Current market conditions on OKX DEX: ${marketConditions}. User holdings: ${userTokenHoldingsString}`,
       };
       const aiExplanation = await getStrategyExplanation(explanationInput);
 
@@ -100,21 +100,21 @@ export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps)
         strategyName: selectedStrategy.name,
         risksInvolved: selectedStrategy.risks,
         aiExplanation: aiExplanation?.explanation || "Could not retrieve detailed explanation.",
-        aiSuggestions: aiSuggestions?.aiSuggestions || "No specific suggestions generated for this exact simulation, consider overall portfolio advice.",
-        aiRationale: aiSuggestions?.aiRationale || "Rationale not available.",
-        gasFeeEstimation: "0.01 - 0.05 ETH (estimate based on typical network conditions)" // Mocked
+        aiSuggestions: aiSuggestionsForPortfolio?.suggestedStrategies || "No general portfolio suggestions generated.",
+        aiRationale: aiSuggestionsForPortfolio?.rationale || "General rationale not available.",
+        gasFeeEstimation: "0.01 - 0.05 ETH (estimate based on typical network conditions)"
       };
 
-      // Mocked simulation logic (remains mocked as per problem constraints)
       if (selectedStrategy.id === 'yield-farming') {
         result.estimatedAPY = `${(Math.random() * 15 + 5).toFixed(2)}% (AI Projected)`;
-        result.potentialProfit = `~$${(Number(params.amount || 0) * 0.01 * (Math.random() * 1 + 0.5)).toFixed(2)} (Projected for ${params.duration} days based on mock rates)`;
+        result.potentialProfit = `~$${(Number(currentParams.amount || 0) * 0.01 * (Math.random() * 1 + 0.5)).toFixed(2)} (Projected for ${currentParams.duration} days based on mock rates)`;
       } else if (selectedStrategy.id === 'flash-loan') {
-        result.potentialProfit = `~$${(Number(params.borrowAmount || 0) * 0.0005 * (Math.random() * 1 + 0.1)).toFixed(2)} (Potential per arbitrage event, highly variable)`;
+        result.potentialProfit = `~$${(Number(currentParams.borrowAmount || 0) * 0.0005 * (Math.random() * 1 + 0.1)).toFixed(2)} (Potential per arbitrage event, highly variable)`;
         result.potentialLoss = "Gas fees if transaction fails or is front-run by bots.";
       }
       
       setSimulationResult(result);
+      onSimulationComplete(result, currentParams);
     });
   };
 
@@ -127,23 +127,27 @@ export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps)
         okxDexMarketConditions: marketConditions,
       };
       const aiSuggestions = await getPersonalizedSuggestions(suggestionsInput);
+      
+      let resultData: SimulationResult;
       if (aiSuggestions) {
-        setSimulationResult({
+        resultData = {
           strategyName: "Personalized Portfolio Suggestions",
           risksInvolved: ["Market Volatility", "Smart Contract Risks", "Always DYOR", "AI suggestions are not financial advice"],
-          aiSuggestions: aiSuggestions.aiSuggestions,
-          aiRationale: aiSuggestions.aiRationale,
+          aiSuggestions: aiSuggestions.suggestedStrategies,
+          aiRationale: aiSuggestions.rationale,
           aiExplanation: "These suggestions are generated by AI based on your provided portfolio information and simulated current market conditions on OKX DEX. Review each suggestion carefully and conduct your own research."
-        });
+        };
       } else {
-         setSimulationResult({
+         resultData = {
           strategyName: "Personalized Portfolio Suggestions",
           risksInvolved: ["Error in generation"],
           aiSuggestions: "Could not generate suggestions at this time. Please try again later.",
           aiRationale: "Unable to generate rationale due to an error.",
           aiExplanation: "There was an issue contacting the AI for suggestions. Please check your connection or try again."
-        });
+        };
       }
+      setSimulationResult(resultData);
+      onSimulationComplete(resultData, { type: "generalAISuggestion" }); // Empty params for general suggestion
     });
   };
 
@@ -266,7 +270,7 @@ export function SimulationArea({ userTokenHoldingsString }: SimulationAreaProps)
                 {simulationResult.aiSuggestions && (
                   <div>
                     <h4 className="text-lg font-semibold mb-2 text-foreground">AI Suggested Strategies:</h4>
-                    <div className="ai-response-text p-3 bg-background/30 rounded-md max-h-60 overflow-y-auto text-sm" dangerouslySetInnerHTML={{ __html: simulationResult.aiSuggestions.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\* (.*?)(<br \/>|$)/g, '<li>$1</li>').replace(/<li>/g, '<ul><li>').replace(/<\/li>(?!<li>)/g, '</li></ul>').replace(/<ul>(.*?)<\/ul>/gs, (match) => match.replace(/<br \/>/g, ''))  }}></div>
+                    <div className="ai-response-text p-3 bg-background/30 rounded-md max-h-60 overflow-y-auto text-sm" dangerouslySetInnerHTML={{ __html: simulationResult.aiSuggestions.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/(\d+\.\s*\*)/g, '<li><strong>').replace(/\*\*(.*?):/g, '$1:</strong>').replace(/<br \/>\s*<li>/g, '<li>').replace(/(<\/li>|<br \/>)\s*<br \/>\s*<li>/g, '$1<li>').replace(/(<li>.*?<\/li>)/g, '<ul>$1</ul>').replace(/<\/ul><ul>/g, '') }}></div>
                   </div>
                 )}
                  {simulationResult.aiRationale && (

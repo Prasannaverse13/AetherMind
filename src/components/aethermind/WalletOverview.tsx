@@ -3,19 +3,18 @@
 import type { TokenBalance } from '@/types';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import Image from 'next/image'; // Keep for potential future use with logos
+import Image from 'next/image';
 import { DollarSign, TrendingUp, Wallet, AlertCircle } from 'lucide-react';
-import { useWallet } from '@/hooks/useWallet'; // Import useWallet to access error state
+import { useWallet } from '@/hooks/useWallet';
 
 interface WalletOverviewProps {
-  account: string; // account is passed as prop
-  balance: TokenBalance[]; // balance is passed as prop
+  account: string;
+  balance: TokenBalance[];
 }
 
 export function WalletOverview({ account, balance }: WalletOverviewProps) {
-  const { error: walletError, loading: walletLoading } = useWallet(); // Get error and loading state
+  const { error: walletError, loading: walletLoading } = useWallet();
 
-  // Calculate total value if valueUSD is available, otherwise it will be 0 or sum of available.
   const totalValueUSD = balance.reduce((sum, token) => sum + (token.valueUSD || 0), 0);
   const shortAccount = account ? `${account.substring(0, 6)}...${account.substring(account.length - 4)}` : "N/A";
 
@@ -36,10 +35,9 @@ export function WalletOverview({ account, balance }: WalletOverviewProps) {
             <div className="text-right bg-primary/10 p-3 rounded-lg shadow-inner min-w-[200px]">
                 <p className="text-sm text-primary font-medium">Total Portfolio Value</p>
                 <p className="text-3xl font-bold text-primary">
-                  {/* Display N/A if no tokens with value or if value is 0 and it's not explicitly set */}
                   {balance.length > 0 && totalValueUSD > 0 ? 
                     `$${totalValueUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                    : (balance.length > 0 && totalValueUSD === 0 ? "$0.00 (Price data unavailable)" : "N/A")
+                    : (balance.length > 0 && totalValueUSD === 0 ? "$0.00 (Price data unavailable)" : "N/A (No balances or price data)")
                   }
                 </p>
             </div>
@@ -72,20 +70,20 @@ export function WalletOverview({ account, balance }: WalletOverviewProps) {
                       <div>
                         <p className="font-semibold text-foreground">{token.name} ({token.symbol})</p>
                         <p className="text-sm text-muted-foreground">
-                          {token.balance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 6})} {token.symbol}
+                          {token.balance.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 8})} {token.symbol}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
                       <p className="font-semibold text-foreground">
-                        {token.valueUSD && token.valueUSD > 0 ? 
+                        {typeof token.valueUSD === 'number' ? 
                           `$${token.valueUSD.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                          : (token.valueUSD === 0 ? "$0.00" : "N/A")
+                          : "Price data unavailable"
                         }
                       </p>
-                      {token.valueUSD && token.balance > 0 && (
+                      {typeof token.valueUSD === 'number' && token.valueUSD > 0 && token.balance > 0 && (
                         <p className="text-sm text-muted-foreground">
-                          @{ (token.valueUSD / token.balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: token.symbol === 'ETH' ? 2 : 4 })} / token
+                          @{ (token.valueUSD / token.balance).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: token.symbol === 'ETH' || token.balance === 0 ? 2 : 4 })} / token
                         </p>
                       )}
                     </div>

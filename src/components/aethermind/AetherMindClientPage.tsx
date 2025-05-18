@@ -1,14 +1,19 @@
 
 "use client";
 
+import { useState, useEffect } from 'react';
 import { useWallet, formatBalanceForAI } from '@/hooks/useWallet';
 import { WalletOverview } from './WalletOverview';
 import { SimulationArea } from './SimulationArea';
 import { DeFiStrategyInfo } from './DeFiStrategyInfo';
 import { Button } from '@/components/ui/button';
-import { Loader2, AlertTriangle, WifiOff } from 'lucide-react';
+import { Loader2, AlertTriangle, WifiOff, Scale, Bug, ShieldX, ListCollapse, Info } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
+import type { RecentSimulation, SimulationParams, SimulationResult } from '@/types';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Badge } from "@/components/ui/badge";
 
 const generalStrategies = [
   {
@@ -31,17 +36,52 @@ const generalStrategies = [
   }
 ];
 
+const riskInfo = [
+  { title: "Impermanent Loss", description: "Risk in liquidity providing where the value of your staked assets can decrease compared to simply holding them.", icon: <Scale size={48} className="text-primary" />},
+  { title: "Smart Contract Risk", description: "Bugs or vulnerabilities in a protocol's code can lead to loss of funds.", icon: <Bug size={48} className="text-primary" /> },
+  { title: "Liquidation Risk", description: "If the value of your collateral falls below a certain threshold in lending protocols, it can be sold off.", icon: <ShieldX size={48} className="text-primary" /> }
+];
 
 export function AetherMindClientPage() {
   const { isConnected, account, balance, connectWallet, loading: walletLoading, error: walletError } = useWallet();
+  const [recentSimulations, setRecentSimulations] = useState<RecentSimulation[]>([]);
+  const [isClient, setIsClient] = useState(false);
 
-  if (walletLoading && !account && !isConnected) { // Show full page loader only on initial load
-    return (
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+
+  const handleNewSimulation = (simulationResult: SimulationResult, inputParams: SimulationParams) => {
+    const newRecentSimulation: RecentSimulation = {
+      id: new Date().toISOString() + Math.random().toString(), // More robust ID
+      timestamp: new Date(),
+      inputs: inputParams,
+      ...simulationResult,
+    };
+    setRecentSimulations(prev => [newRecentSimulation, ...prev.slice(0, 4)]); // Keep last 5
+  };
+  
+  if (!isClient) { // Initial SSR or hydration loading state
+     return (
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] text-center p-8">
         <Loader2 className="h-16 w-16 animate-spin text-primary mb-6" />
         <h2 className="text-3xl font-semibold mb-2 text-foreground">Loading AetherMind...</h2>
         <p className="text-muted-foreground max-w-md">
-          Preparing your intelligent DeFi navigator. Please wait a moment.
+          Preparing your intelligent DeFi navigator.
+        </p>
+      </div>
+    );
+  }
+
+
+  if (walletLoading && !account && !isConnected && isClient) { 
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] text-center p-8">
+        <Loader2 className="h-16 w-16 animate-spin text-primary mb-6" />
+        <h2 className="text-3xl font-semibold mb-2 text-foreground">Connecting Wallet...</h2>
+        <p className="text-muted-foreground max-w-md">
+          Please approve the connection in your Metamask wallet.
         </p>
       </div>
     );
@@ -90,24 +130,81 @@ export function AetherMindClientPage() {
             </div>
           </div>
         </section>
-      ) : account && ( // Ensure account is not null before rendering connected state
+      ) : account && ( 
         <>
           <WalletOverview account={account} balance={balance} />
           <SimulationArea 
-            userTokenHoldingsString={formatBalanceForAI(balance)} 
+            userTokenHoldingsString={formatBalanceForAI(balance)}
+            onSimulationComplete={handleNewSimulation}
           />
-          {/* Placeholder for Recent Simulations */}
           <section id="recent-simulations" className="glass-card p-6 md:p-8">
             <h2 className="text-2xl font-semibold mb-6 text-foreground">Recent Simulations</h2>
-            <div className="border border-dashed border-border p-8 rounded-lg text-center bg-background/50">
-              <AlertTriangle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground">
-                Your recent simulation history will appear here.
-              </p>
-              <p className="text-sm text-muted-foreground mt-2">
-                Start a new simulation to see it listed.
-              </p>
-            </div>
+            {recentSimulations.length > 0 ? (
+              <Accordion type="single" collapsible className="w-full space-y-4">
+                {recentSimulations.map((sim, index) => (
+                  <AccordionItem value={`sim-${sim.id}`} key={sim.id} className="glass-card !bg-card/70 border-border/50 rounded-lg overflow-hidden">
+                    <AccordionTrigger className="p-4 hover:no-underline hover:bg-accent/10">
+                      <div className="flex justify-between items-center w-full">
+                        <div className='text-left'>
+                          <h3 className="text-lg font-semibold text-primary">{sim.strategyName}</h3>
+                          <p className="text-xs text-muted-foreground">
+                            Simulated at: {new Date(sim.timestamp).toLocaleString()}
+                          </p>
+                        </div>
+                        <Badge variant={sim.potentialProfit && !sim.potentialProfit.includes("highly variable") ? "default" : "secondary"} className="ml-auto mr-2">
+                          {sim.potentialProfit ? 'Profit Potential' : (sim.estimatedAPY ? 'APY Potential' : 'Info')}
+                        </Badge>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="p-4 border-t border-border/30 bg-background/30">
+                      <div className="space-y-3 text-sm">
+                        <div>
+                          <h4 className="font-semibold text-foreground">Inputs:</h4>
+                          <ul className="list-disc list-inside text-muted-foreground pl-2">
+                            {Object.entries(sim.inputs).map(([key, value]) => (
+                              <li key={key}><span className="capitalize">{key.replace(/([A-Z])/g, ' $1')}:</span> {String(value)}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        {sim.potentialProfit && <p><strong>Potential Profit:</strong> <span className="text-green-400">{sim.potentialProfit}</span></p>}
+                        {sim.estimatedAPY && <p><strong>Estimated APY:</strong> <span className="text-green-400">{sim.estimatedAPY}</span></p>}
+                        {sim.potentialLoss && <p><strong>Potential Loss:</strong> <span className="text-red-400">{sim.potentialLoss}</span></p>}
+                        {sim.gasFeeEstimation && <p className="text-muted-foreground"><strong>Gas Fee Est:</strong> {sim.gasFeeEstimation}</p>}
+                        
+                        {sim.aiSuggestions && (
+                          <div>
+                            <h4 className="font-semibold text-foreground mt-2">AI Suggestions:</h4>
+                            <div className="ai-response-text p-2 bg-background/50 rounded-md max-h-40 overflow-y-auto text-xs" dangerouslySetInnerHTML={{ __html: sim.aiSuggestions.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/(\d+\.\s*\*)/g, '<li><strong>').replace(/\*\*(.*?):/g, '$1:</strong>').replace(/<br \/>\s*<li>/g, '<li>').replace(/(<\/li>|<br \/>)\s*<br \/>\s*<li>/g, '$1<li>').replace(/(<li>.*?<\/li>)/g, '<ul>$1</ul>').replace(/<\/ul><ul>/g, '') }}></div>
+                          </div>
+                        )}
+                        {sim.aiRationale && (
+                          <div>
+                            <h4 className="font-semibold text-foreground mt-2">AI Rationale:</h4>
+                            <div className="ai-response-text p-2 bg-background/50 rounded-md max-h-40 overflow-y-auto text-xs" dangerouslySetInnerHTML={{ __html: sim.aiRationale.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }}></div>
+                          </div>
+                        )}
+                        <div>
+                          <h4 className="font-semibold text-foreground mt-2">Key Risks:</h4>
+                          <ul className="list-disc list-inside text-muted-foreground pl-2 text-xs">
+                            {sim.risksInvolved.map(risk => <li key={risk}>{risk}</li>)}
+                          </ul>
+                        </div>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            ) : (
+              <div className="border border-dashed border-border p-8 rounded-lg text-center bg-background/50">
+                <ListCollapse className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <p className="text-muted-foreground">
+                  Your recent simulation history will appear here.
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Start a new simulation to see it listed.
+                </p>
+              </div>
+            )}
           </section>
         </>
       )}
@@ -119,11 +216,7 @@ export function AetherMindClientPage() {
             Decentralized Finance offers exciting opportunities but also comes with inherent risks. AetherMind aims to provide clarity, but always do your own research (DYOR) before investing. Simulation data is for illustrative purposes.
           </p>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
-            {[
-              { title: "Impermanent Loss", description: "Risk in liquidity providing where the value of your staked assets can decrease compared to simply holding them." , icon: <Image src="https://placehold.co/48x48.png" alt="Impermanent Loss" width={48} height={48} className="rounded-lg" data-ai-hint="balance scale"/>},
-              { title: "Smart Contract Risk", description: "Bugs or vulnerabilities in a protocol's code can lead to loss of funds.", icon: <Image src="https://placehold.co/48x48.png" alt="Smart Contract" width={48} height={48} className="rounded-lg" data-ai-hint="code bug"/> },
-              { title: "Liquidation Risk", description: "If the value of your collateral falls below a certain threshold in lending protocols, it can be sold off.", icon: <Image src="https://placehold.co/48x48.png" alt="Liquidation" width={48} height={48} className="rounded-lg" data-ai-hint="auction hammer"/> }
-            ].map(risk => (
+            {riskInfo.map(risk => (
               <div key={risk.title} className="glass-card p-6">
                 <div className="flex items-center mb-3">
                   {risk.icon}
