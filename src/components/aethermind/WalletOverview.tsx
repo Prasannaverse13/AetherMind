@@ -1,16 +1,15 @@
 
 "use client";
 import type { TokenBalance } from '@/types';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Image from 'next/image';
-import { Wallet, Copy, RefreshCw, AlertCircle, Loader2, Network, Coins } from 'lucide-react';
-import { useWallet } from '@/hooks/useWallet';
+import { Wallet, Copy, RefreshCw, AlertCircle, Loader2, Network as NetworkIcon, Coins } from 'lucide-react'; // Renamed Network to NetworkIcon
 import { useToast } from '@/hooks/use-toast';
 
 interface WalletOverviewProps {
-  account: string | null; // Can be null if not connected
+  account: string | null;
   balance: TokenBalance[];
   networkName?: string;
   onRefresh?: () => void;
@@ -42,11 +41,11 @@ export function WalletOverview({ account, balance, networkName, onRefresh, isLoa
      totalPortfolioValueDisplay = <p className="text-2xl font-bold text-primary flex items-center"><Loader2 className="h-6 w-6 animate-spin mr-2" /> Loading...</p>;
   } else if (balance.length === 0 && !isLoading) {
     totalPortfolioValueDisplay = <p className="text-lg font-semibold text-muted-foreground">N/A (No token balances found)</p>;
-  } else if (balance.length > 0 && totalValueUSD === 0 && balance.every(t => t.valueUSD === undefined)) {
+  } else if (balance.length > 0 && balance.every(t => t.valueUSD === undefined)) {
     totalPortfolioValueDisplay = (
       <div>
-        <p className="text-3xl font-extrabold text-primary">$0.00</p>
-        <p className="text-xs font-normal text-muted-foreground mt-1">(Price data unavailable for total)</p>
+        <p className="text-2xl font-bold text-primary">Value N/A</p>
+        <p className="text-xs font-normal text-muted-foreground mt-1">(Price data missing for all tokens)</p>
       </div>
     );
   } else { 
@@ -85,12 +84,14 @@ export function WalletOverview({ account, balance, networkName, onRefresh, isLoa
                 )}
               </div>
             </div>
-            <div>
-              <p className="text-xs text-muted-foreground mb-1">Network</p>
-              <div className="flex items-center text-sm text-foreground">
-                <Network className="h-4 w-4 mr-2 text-primary" /> {networkName || "Loading..."}
+            {networkName && networkName !== "Unknown Network" && (
+              <div>
+                <p className="text-xs text-muted-foreground mb-1">Network</p>
+                <div className="flex items-center text-sm text-foreground">
+                  <NetworkIcon className="h-4 w-4 mr-2 text-primary" /> {networkName}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           <div className="glass-card !bg-card/50 p-4 rounded-lg">
@@ -153,3 +154,4 @@ export function WalletOverview({ account, balance, networkName, onRefresh, isLoa
     </section>
   );
 }
+
