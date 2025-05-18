@@ -11,7 +11,7 @@ AetherMind is an intelligent DeFi (Decentralized Finance) navigator designed to 
 
 1. team_name: aethermind
 2. team:
- *   name: Prasannaran (techrevenger)
+ *   name: Prasannaram (techrevenger)
  *   role: Developer
  *   email: Prasannaverse13@gmail.com 
  *   github_username: https://github.com/Prasannaverse13
