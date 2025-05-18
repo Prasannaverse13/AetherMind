@@ -3,7 +3,7 @@ export interface TokenBalance {
   symbol: string;
   name: string;
   balance: number;
-  valueUSD?: number; // Made optional as real-time price feed is complex
+  valueUSD?: number; // Real-time price feed is complex
   logoUrl?: string;
 }
 
@@ -41,9 +41,9 @@ export interface SimulationResult {
   estimatedAPY?: string;
   risksInvolved: string[];
   gasFeeEstimation?: string;
-  aiExplanation?: string; // Expected to be Markdown
-  aiSuggestions?: string; // Expected to be Markdown
-  aiRationale?: string; // Expected to be Markdown
+  aiExplanation?: string; // Expected to be HTML
+  aiSuggestions?: string; // Expected to be HTML
+  aiRationale?: string; // Expected to be HTML
 }
 
 export interface RecentSimulation extends SimulationResult {
@@ -57,8 +57,11 @@ export interface WalletState {
   isConnected: boolean;
   account: string | null;
   balance: TokenBalance[];
+  networkName?: string; // Added for displaying network name
   connectWallet: () => Promise<void>;
   disconnectWallet: () => void;
+  refreshBalance?: () => Promise<void>; // Added for manual refresh
   loading: boolean;
   error: string | null;
 }
+
