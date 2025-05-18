@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { getStrategyExplanation } from "@/lib/actions";
+import type { ExplainDefiStrategyOutput } from "@/ai/flows/defi-strategy-explanation"; // Added import
 import { useState, useTransition } from "react";
 import { Loader2 } from "lucide-react";
 
@@ -25,13 +27,14 @@ interface DeFiStrategyInfoProps {
 }
 
 export function DeFiStrategyInfo({ strategy }: DeFiStrategyInfoProps) {
-  const [explanation, setExplanation] = useState<string | null>(null);
+  const [explanation, setExplanation] = useState<ExplainDefiStrategyOutput | null>(null); // Changed type
   const [isLoading, startLoading] = useTransition();
 
   const fetchExplanation = async () => {
-    if (explanation) return; // Already fetched
+    if (explanation && !isLoading) return; // Already fetched or currently fetching
     startLoading(async () => {
       const result = await getStrategyExplanation({ strategy: strategy.name });
+      // getStrategyExplanation is guaranteed to return ExplainDefiStrategyOutput (even on error, it returns a fallback object)
       setExplanation(result);
     });
   };
@@ -66,10 +69,10 @@ export function DeFiStrategyInfo({ strategy }: DeFiStrategyInfoProps) {
                   <p className="ml-3 text-muted-foreground">AI is generating explanation...</p>
                 </div>
               )}
-              {explanation ? (
-                <p className="whitespace-pre-line">{explanation}</p>
+              {explanation?.explanation ? ( // Access .explanation property
+                <div className="ai-response-text" dangerouslySetInnerHTML={{ __html: explanation.explanation || "" }} />
               ) : (
-                !isLoading && <p>No explanation available yet. Click "Learn More" again or try later.</p>
+                !isLoading && <p className="text-muted-foreground">No explanation available yet. Click "Learn More" again or try later.</p>
               )}
             </div>
           </DialogContent>
