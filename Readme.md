@@ -16,7 +16,7 @@ AetherMind is an intelligent DeFi (Decentralized Finance) navigator designed to 
  *   email: Prasannaverse13@gmail.com 
  *   github_username: https://github.com/Prasannaverse13
  *   github_project_repo: https://github.com/Prasannaverse13/AetherMind
- *   youtube_demo_video: https://youtu.be/RIZwLQmfoNk
+ *   youtube_demo_video: https://youtu.be/NFBm9ogRA4s
  *   project_link: https://aether-mind-blond.vercel.app/
 
 ## How it Works (Overall Flow)
