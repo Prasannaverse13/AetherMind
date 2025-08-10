@@ -3,9 +3,9 @@
 
 ## Project Introduction
 
-AetherMind is an intelligent DeFi (Decentralized Finance) navigator designed to empower users to explore, simulate, and understand complex DeFi strategies. It leverages the power of AI (Google's Gemini models via Genkit) to provide personalized strategy suggestions and detailed explanations, grounded in real-time market data from OKX DEX. The platform connects to the user's Metamask wallet to offer insights relevant to their holdings.
+AetherMind is an intelligent DeFi (Decentralized Finance) navigator designed to empower users to explore, simulate, and understand complex DeFi strategies. It leverages the power of AI (Google's Gemini models via Genkit) to provide personalized strategy suggestions and detailed explanations, grounded in real-time market data from **OKX DEX**. The platform connects to the user's Metamask wallet to offer insights relevant to their holdings, with a special focus on strategies compatible with **X Layer**, OKX's high-performance Layer 2 network.
 
-**Core Goal:** To demystify DeFi by providing users with tools to simulate strategies, understand risks, and make more informed decisions in the dynamic world of decentralized finance, with a focus on the OKX DEX ecosystem.
+**Core Goal:** To demystify DeFi by providing users with tools to simulate strategies, understand risks, and make more informed decisions in the dynamic world of decentralized finance, with a focus on the OKX DEX and X Layer ecosystems.
 
 ## How it Works (Overall Flow)
 
@@ -13,8 +13,8 @@ AetherMind is an intelligent DeFi (Decentralized Finance) navigator designed to 
 2.  **Wallet Overview**: A summary of the connected wallet is displayed, primarily showing the native currency balance (e.g., ETH). Full ERC20 token discovery and comprehensive valuation are planned future enhancements.
 3.  **Risk Profile Selection**: Users can select a risk profile (Conservative, Balanced, Aggressive) to tailor AI suggestions.
 4.  **AI-Powered Simulations**:
-    *   **General Strategy Suggestions**: Users can request AI-generated DeFi strategy suggestions based on their native token holdings, selected risk profile, and current market conditions (sourced from OKX DEX).
-    *   **Specific Strategy Simulation**: Users can choose predefined DeFi strategies (e.g., Yield Farming, Flash Loan Arbitrage), input specific parameters, and run a simulation. The AI provides a detailed explanation of the chosen strategy, potential outcomes (currently illustrative for profit/loss figures), and associated risks, contextualized by OKX DEX data.
+    *   **General Strategy Suggestions**: Users can request AI-generated DeFi strategy suggestions based on their native token holdings, selected risk profile, and current market conditions (sourced from **OKX DEX**). The AI is specifically instructed to prioritize strategies for **X Layer**.
+    *   **Specific Strategy Simulation**: Users can choose predefined DeFi strategies (e.g., Yield Farming, Flash Loan Arbitrage), input specific parameters, and run a simulation. The AI provides a detailed explanation of the chosen strategy, potential outcomes (currently illustrative for profit/loss figures), and associated risks, contextualized by **OKX DEX** data and **X Layer** benefits.
 5.  **Educational Insights**: The platform offers explanations for various DeFi strategies and common risks.
 6.  **Recent Simulations**: A history of the user's recent simulations is stored locally (in-browser) and displayed for review.
 
@@ -22,7 +22,7 @@ AetherMind is an intelligent DeFi (Decentralized Finance) navigator designed to 
 
 *   **Wallet Connection & Overview**:
     *   Integrates with Metamask (`window.ethereum`) for secure wallet connection.
-    *   Displays the connected account address, network name, and native currency balance.
+    *   Displays the connected account address, network name (including **X Layer** Mainnet/Testnet), and native currency balance.
     *   Includes a "Copy Address" button and a "Refresh Balance" feature.
     *   **Files**: `src/hooks/useWallet.ts`, `src/components/aethermind/WalletConnect.tsx`, `src/components/aethermind/WalletOverview.tsx`.
 
@@ -33,15 +33,15 @@ AetherMind is an intelligent DeFi (Decentralized Finance) navigator designed to 
     *   **Specific Strategy Simulation**: Users can simulate:
         *   Yield Farming
         *   Flash Loan Arbitrage (conceptual, as true arbitrage simulation is complex)
-        *   Users input parameters like asset, amount, and duration.
+        *   Users input parameters like asset, amount, and duration, with **X Layer** included as a platform option.
         *   The AI provides detailed explanations, potential outcomes (profit/loss figures are illustrative), and risks.
         *   **UI**: `src/components/aethermind/SimulationArea.tsx` (also contains strategy definitions).
         *   **AI Explanation Logic**: `src/ai/flows/defi-strategy-explanation.ts`.
-    *   **General AI Strategy Suggestions**: The AI generates 3-5 personalized DeFi strategy suggestions based on user's native token holdings, real-time OKX DEX market conditions, and selected risk profile.
+    *   **General AI Strategy Suggestions**: The AI generates 3-5 personalized DeFi strategy suggestions based on user's native token holdings, real-time **OKX DEX** market conditions, and selected risk profile, with an emphasis on **X Layer** opportunities.
         *   **AI Logic**: `src/ai/flows/personalized-strategy-suggestions.ts`.
 
 *   **Educational Insights**:
-    *   **DeFi Strategy Info**: Cards for common strategies (e.g., Yield Farming, Flash Loans) with an option to "Learn More with AI," which fetches a detailed explanation.
+    *   **DeFi Strategy Info**: Cards for common strategies (e.g., Yield Farming, Flash Loans) with an option to "Learn More with AI," which fetches a detailed explanation that includes **X Layer** context.
         *   **UI**: `src/components/aethermind/DeFiStrategyInfo.tsx`.
         *   **AI Logic**: `src/ai/flows/defi-strategy-explanation.ts`.
     *   **Risk Information**: Static cards explaining common DeFi risks like Impermanent Loss, Smart Contract Risk, and Liquidation Risk.
@@ -58,7 +58,7 @@ AetherMind is an intelligent DeFi (Decentralized Finance) navigator designed to 
 
 ## OKX DEX API Integration
 
-AetherMind integrates with the OKX DEX API v5 to fetch real-time market data, which is used to provide context for AI-powered simulations and strategy suggestions.
+AetherMind integrates with the **OKX DEX API v5** to fetch real-time market data, which is used to provide context for AI-powered simulations and strategy suggestions.
 
 *   **Core Integration File**: `src/services/okxService.ts`
     *   This service module is responsible for all direct communication with the OKX API.
@@ -79,13 +79,31 @@ AetherMind integrates with the OKX DEX API v5 to fetch real-time market data, wh
     *   The market summary string generated by `fetchOkxMarketSummary()` is retrieved by the `getOkxMarketConditions()` server action in `src/lib/actions.ts`.
     *   This market condition data is then passed as input to the Genkit AI flows:
         *   `src/ai/flows/personalized-strategy-suggestions.ts`: Uses market conditions to tailor DeFi strategy advice.
-        *   `src/ai/flows/defi-strategy-explanation.ts`: Uses market conditions to provide relevant context when explaining specific DeFi strategies (e.g., how current volatility might affect a yield farming strategy on OKX DEX).
-    *   This ensures that AI-generated insights are more relevant and grounded in actual, albeit selectively fetched, market data from OKX DEX.
+        *   `src/ai/flows/defi-strategy-explanation.ts`: Uses market conditions to provide relevant context when explaining specific DeFi strategies (e.g., how current volatility might affect a yield farming strategy on **OKX DEX**).
+    *   This ensures that AI-generated insights are more relevant and grounded in actual, albeit selectively fetched, market data from **OKX DEX**.
 
 *   **Current Status of Integration**:
     *   The `okxService.ts` is implemented to make live API calls for fetching market summaries for the specified pairs.
     *   API key handling and request signing are in place.
     *   Error handling for API requests is included.
+
+## X Layer Integration
+
+The project has been made **X Layer-aware** to align with modern, low-cost DeFi ecosystems. X Layer is OKX's high-performance, ZK-powered Layer 2 network, designed for secure and scalable on-chain applications. AetherMind's integration with X Layer is conceptual but implemented across the application to guide users towards its benefits.
+
+*   **How it Works in AetherMind**:
+    *   The application is designed to recognize and prioritize X Layer, encouraging users to explore its ecosystem. The AI has been specifically instructed to suggest strategies that can be executed on X Layer, highlighting benefits like lower gas fees and faster transaction speeds, which are critical for profitable DeFi operations.
+
+*   **Specific Code Locations**:
+    1.  **Network Recognition (`src/hooks/useWallet.ts`)**:
+        *   The `getNetworkName` function within the wallet hook is configured to recognize and display the network name for **X Layer Mainnet (Chain ID 196)** and **Testnet (Chain ID 195)**. When a user connects their wallet while on X Layer, the UI will correctly identify it.
+
+    2.  **AI Awareness (`src/ai/flows/`)**:
+        *   The core AI prompts in `src/ai/flows/defi-strategy-explanation.ts` and `src/ai/flows/personalized-strategy-suggestions.ts` have been updated. They now contain specific instructions for the AI to consider, prioritize, and explain strategies that are advantageous on **X Layer**.
+
+    3.  **UI Integration (`src/components/aethermind/SimulationArea.tsx`)**:
+        *   The main simulation interface has been updated to include **X Layer** as an explicit platform choice for certain DeFi strategies (e.g., in the "Yield Farming" simulation). This makes the integration visible and interactive for the user.
+
 
 ## AI Integration (Genkit & Gemini)
 
@@ -96,11 +114,11 @@ AetherMind utilizes Genkit, an open-source framework, to integrate with Google's
     *   `src/ai/flows/defi-strategy-explanation.ts`:
         *   A Genkit flow that defines an AI prompt to explain a given DeFi strategy in detail.
         *   Input: Strategy name and parameters.
-        *   Output: A structured HTML explanation covering mechanics, potential risks (e.g., impermanent loss, smart contract vulnerabilities), considerations for OKX DEX, and advice on what to research before proceeding.
+        *   Output: A structured HTML explanation covering mechanics, potential risks, considerations for **OKX DEX & X Layer**, and advice on what to research before proceeding.
     *   `src/ai/flows/personalized-strategy-suggestions.ts`:
         *   A Genkit flow that defines an AI prompt to generate personalized DeFi strategy suggestions.
-        *   Input: User's token holdings (currently native balance), OKX DEX market conditions (from `okxService.ts`), and user's selected risk profile.
-        *   Output: A list of 3-5 suggested DeFi strategies suitable for the user on OKX DEX, formatted as HTML, along with a rationale explaining the choices.
+        *   Input: User's token holdings (currently native balance), **OKX DEX** market conditions (from `okxService.ts`), and user's selected risk profile.
+        *   Output: A list of 3-5 suggested DeFi strategies suitable for the user on **OKX DEX** or **X Layer**, formatted as HTML, along with a rationale explaining the choices.
 
 *   **How AI is Used**:
     *   Server actions in `src/lib/actions.ts` (`getStrategyExplanation`, `getPersonalizedSuggestions`) act as wrappers around these Genkit flows, making them callable from client components.
@@ -168,7 +186,7 @@ AetherMind utilizes Genkit, an open-source framework, to integrate with Google's
 *   **Security**: API keys are intended to be kept secure in the `.env` file and used server-side. No private keys are handled by the application. All transactions requiring wallet interaction (if implemented for execution) would go through Metamask for user approval.
 *   **Future Enhancements**:
     *   Full ERC20 token discovery and valuation in Wallet Overview.
-    *   Deeper integration with OKX DEX for more realistic simulation of trade execution, liquidity provision, and yield farming outcomes.
+    *   Deeper integration with **OKX DEX** for more realistic simulation of trade execution, liquidity provision, and yield farming outcomes.
     *   Implementation of other features from the roadmap (Backtesting, Automated Strategy Execution (with caution), IL Prediction, Social Sharing, Portfolio Forecaster, DeFi Academy).
     *   More sophisticated state management for recent simulations (e.g., persistent storage beyond `localStorage` if needed).
     *   Enhanced UI/UX for data visualization (e.g., charts for portfolio breakdown).
