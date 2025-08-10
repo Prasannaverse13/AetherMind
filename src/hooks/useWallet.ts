@@ -288,3 +288,4 @@ export const formatBalanceForAI = (balance: TokenBalance[]): string => {
   
   return "Native currency balance not available or is zero.";
 };
+ 

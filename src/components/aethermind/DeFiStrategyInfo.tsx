@@ -81,3 +81,4 @@ export function DeFiStrategyInfo({ strategy }: DeFiStrategyInfoProps) {
     </Card>
   );
 }
+ 

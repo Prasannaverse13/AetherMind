@@ -496,3 +496,4 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
     </section>
   );
 }
+ 

@@ -172,3 +172,4 @@ export function WalletOverview({ account, balance, networkName, onRefresh, isLoa
     </section>
   );
 }
+ 

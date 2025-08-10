@@ -19,3 +19,4 @@ export function AetherMindLogo(props: SVGProps<SVGSVGElement>) {
     </svg>
   );
 }
+ 
