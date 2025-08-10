@@ -2318,7 +2318,6 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                             param.type === 'select' && param.options && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Select"], {
                                                                 onValueChange: (value)=>handleParamChange(param.id, value),
                                                                 defaultValue: param.defaultValue || undefined,
-                                                                value: params[param.id] || undefined,
                                                                 disabled: isSuggesting || isSimulating,
                                                                 children: [
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectTrigger"], {
@@ -2328,12 +2327,12 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                                             placeholder: param.placeholder
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                            lineNumber: 321,
+                                                                            lineNumber: 320,
                                                                             columnNumber: 29
                                                                         }, this)
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                        lineNumber: 320,
+                                                                        lineNumber: 319,
                                                                         columnNumber: 27
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$select$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["SelectContent"], {
@@ -2344,12 +2343,12 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                                                 children: opt.label
                                                                             }, opt.value, false, {
                                                                                 fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                                lineNumber: 325,
+                                                                                lineNumber: 324,
                                                                                 columnNumber: 31
                                                                             }, this))
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                        lineNumber: 323,
+                                                                        lineNumber: 322,
                                                                         columnNumber: 27
                                                                     }, this)
                                                                 ]
@@ -2373,13 +2372,13 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                             className: "mr-2 h-5 w-5 animate-spin"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 333,
+                                                            lineNumber: 332,
                                                             columnNumber: 37
                                                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$wand$2d$sparkles$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Wand2$3e$__["Wand2"], {
                                                             className: "mr-2 h-5 w-5"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 333,
+                                                            lineNumber: 332,
                                                             columnNumber: 89
                                                         }, this),
                                                         "Run AI Simulation for ",
@@ -2387,7 +2386,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 332,
+                                                    lineNumber: 331,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
@@ -2403,20 +2402,20 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                     className: "h-8 w-8 mb-3"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 340,
+                                                    lineNumber: 339,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                     children: "Select a risk profile and either get general AI suggestions or choose a specific strategy above to simulate its parameters."
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 341,
+                                                    lineNumber: 340,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                            lineNumber: 339,
+                                            lineNumber: 338,
                                             columnNumber: 17
                                         }, this)
                                     ]
@@ -2439,7 +2438,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                     className: "h-5 w-5 text-accent-foreground"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                    lineNumber: 348,
+                                    lineNumber: 347,
                                     columnNumber: 19
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertTitle"], {
@@ -2447,7 +2446,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                     children: selectedStrategy.name
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                    lineNumber: 349,
+                                    lineNumber: 348,
                                     columnNumber: 19
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDescription"], {
@@ -2467,7 +2466,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                         children: "Learn More Details"
                                                     }, void 0, false, {
                                                         fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                        lineNumber: 354,
+                                                        lineNumber: 353,
                                                         columnNumber: 25
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$accordion$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AccordionContent"], {
@@ -2478,7 +2477,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                                 children: selectedStrategy.longDescription
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                lineNumber: 356,
+                                                                lineNumber: 355,
                                                                 columnNumber: 64
                                                             }, this),
                                                             selectedStrategy.okxContext && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Fragment"], {
@@ -2487,7 +2486,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                                         children: "OKX/X Layer Context:"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                        lineNumber: 357,
+                                                                        lineNumber: 356,
                                                                         columnNumber: 61
                                                                     }, this),
                                                                     " ",
@@ -2497,30 +2496,30 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                        lineNumber: 355,
+                                                        lineNumber: 354,
                                                         columnNumber: 25
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                lineNumber: 353,
+                                                lineNumber: 352,
                                                 columnNumber: 23
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                            lineNumber: 352,
+                                            lineNumber: 351,
                                             columnNumber: 21
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                    lineNumber: 350,
+                                    lineNumber: 349,
                                     columnNumber: 19
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                            lineNumber: 347,
+                            lineNumber: 346,
                             columnNumber: 17
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$accordion$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Accordion"], {
@@ -2540,19 +2539,19 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                     className: "mr-3 h-5 w-5"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 369,
+                                                    lineNumber: 368,
                                                     columnNumber: 29
                                                 }, this),
                                                 " 0x Gasless Swap Quote Tool"
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                            lineNumber: 368,
+                                            lineNumber: 367,
                                             columnNumber: 25
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                        lineNumber: 367,
+                                        lineNumber: 366,
                                         columnNumber: 21
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$accordion$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AccordionContent"], {
@@ -2568,7 +2567,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                             children: "Request Quote"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 375,
+                                                            lineNumber: 374,
                                                             columnNumber: 33
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2581,7 +2580,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                                             children: "Sell Token Address"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                            lineNumber: 378,
+                                                                            lineNumber: 377,
                                                                             columnNumber: 41
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -2592,13 +2591,13 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                                             placeholder: "e.g., 0xC183..."
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                            lineNumber: 379,
+                                                                            lineNumber: 378,
                                                                             columnNumber: 41
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                    lineNumber: 377,
+                                                                    lineNumber: 376,
                                                                     columnNumber: 37
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2608,7 +2607,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                                             children: "Buy Token Address"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                            lineNumber: 382,
+                                                                            lineNumber: 381,
                                                                             columnNumber: 41
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -2619,13 +2618,13 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                                             placeholder: "e.g., 0xdac1..."
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                            lineNumber: 383,
+                                                                            lineNumber: 382,
                                                                             columnNumber: 41
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                    lineNumber: 381,
+                                                                    lineNumber: 380,
                                                                     columnNumber: 37
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2635,7 +2634,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                                             children: "Sell Amount (in wei)"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                            lineNumber: 386,
+                                                                            lineNumber: 385,
                                                                             columnNumber: 41
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -2646,13 +2645,13 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                                             placeholder: "e.g., 1000000000000000000"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                            lineNumber: 387,
+                                                                            lineNumber: 386,
                                                                             columnNumber: 41
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                    lineNumber: 385,
+                                                                    lineNumber: 384,
                                                                     columnNumber: 37
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2662,7 +2661,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                                             children: "Taker Address (Optional)"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                            lineNumber: 390,
+                                                                            lineNumber: 389,
                                                                             columnNumber: 41
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -2674,19 +2673,19 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                                             disabled: true
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                            lineNumber: 391,
+                                                                            lineNumber: 390,
                                                                             columnNumber: 41
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                    lineNumber: 389,
+                                                                    lineNumber: 388,
                                                                     columnNumber: 38
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 376,
+                                                            lineNumber: 375,
                                                             columnNumber: 33
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -2698,26 +2697,26 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                                     className: "mr-2 h-4 w-4 animate-spin"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                    lineNumber: 395,
+                                                                    lineNumber: 394,
                                                                     columnNumber: 56
                                                                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$search$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Search$3e$__["Search"], {
                                                                     className: "mr-2 h-4 w-4"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                    lineNumber: 395,
+                                                                    lineNumber: 394,
                                                                     columnNumber: 107
                                                                 }, this),
                                                                 "Fetch 0x Gasless Quote"
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 394,
+                                                            lineNumber: 393,
                                                             columnNumber: 33
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 374,
+                                                    lineNumber: 373,
                                                     columnNumber: 29
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2728,7 +2727,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                             children: "Quote Result"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 400,
+                                                            lineNumber: 399,
                                                             columnNumber: 33
                                                         }, this),
                                                         isFetchingQuote ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2737,46 +2736,46 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                                 className: "h-8 w-8 animate-spin text-primary"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                lineNumber: 403,
+                                                                lineNumber: 402,
                                                                 columnNumber: 41
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 402,
+                                                            lineNumber: 401,
                                                             columnNumber: 37
                                                         }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$aethermind$2f$GaslessQuoteDisplay$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["GaslessQuoteDisplay"], {
                                                             result: gaslessQuoteResult
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 406,
+                                                            lineNumber: 405,
                                                             columnNumber: 37
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 399,
+                                                    lineNumber: 398,
                                                     columnNumber: 29
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                            lineNumber: 373,
+                                            lineNumber: 372,
                                             columnNumber: 25
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                        lineNumber: 372,
+                                        lineNumber: 371,
                                         columnNumber: 21
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                lineNumber: 366,
+                                lineNumber: 365,
                                 columnNumber: 17
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                            lineNumber: 365,
+                            lineNumber: 364,
                             columnNumber: 13
                         }, this),
                         (isSimulating || isSuggesting) && !simulationResult && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2786,7 +2785,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                     className: "h-12 w-12 animate-spin text-primary mx-auto mb-4"
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                    lineNumber: 416,
+                                    lineNumber: 415,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2794,7 +2793,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                     children: "AI is thinking... Please wait."
                                 }, void 0, false, {
                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                    lineNumber: 417,
+                                    lineNumber: 416,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2806,13 +2805,13 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                    lineNumber: 418,
+                                    lineNumber: 417,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                            lineNumber: 415,
+                            lineNumber: 414,
                             columnNumber: 13
                         }, this),
                         simulationResult && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Card"], {
@@ -2830,13 +2829,13 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                     children: simulationResult.strategyName
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 426,
+                                                    lineNumber: 425,
                                                     columnNumber: 42
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                            lineNumber: 425,
+                                            lineNumber: 424,
                                             columnNumber: 17
                                         }, this),
                                         displayTime && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardDescription"], {
@@ -2850,13 +2849,13 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                            lineNumber: 428,
+                                            lineNumber: 427,
                                             columnNumber: 34
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                    lineNumber: 424,
+                                    lineNumber: 423,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -2869,7 +2868,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                     children: "AI Suggested Strategies:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 433,
+                                                    lineNumber: 432,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2879,13 +2878,13 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                     }
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 434,
+                                                    lineNumber: 433,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                            lineNumber: 432,
+                                            lineNumber: 431,
                                             columnNumber: 19
                                         }, this),
                                         simulationResult.aiRationale && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2895,7 +2894,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                     children: "Rationale:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 439,
+                                                    lineNumber: 438,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2905,13 +2904,13 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                     }
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 440,
+                                                    lineNumber: 439,
                                                     columnNumber: 22
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                            lineNumber: 438,
+                                            lineNumber: 437,
                                             columnNumber: 19
                                         }, this),
                                         simulationResult.aiExplanation && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2921,7 +2920,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                     children: "AI Detailed Explanation:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 445,
+                                                    lineNumber: 444,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2931,13 +2930,13 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                     }
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 446,
+                                                    lineNumber: 445,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                            lineNumber: 444,
+                                            lineNumber: 443,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2950,7 +2949,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                             children: "Estimated APY:"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 451,
+                                                            lineNumber: 450,
                                                             columnNumber: 52
                                                         }, this),
                                                         " ",
@@ -2959,13 +2958,13 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                             children: simulationResult.estimatedAPY
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 451,
+                                                            lineNumber: 450,
                                                             columnNumber: 84
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 451,
+                                                    lineNumber: 450,
                                                     columnNumber: 21
                                                 }, this),
                                                 simulationResult.potentialProfit && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2975,7 +2974,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                             children: "Potential Profit:"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 454,
+                                                            lineNumber: 453,
                                                             columnNumber: 52
                                                         }, this),
                                                         " ",
@@ -2984,13 +2983,13 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                             children: simulationResult.potentialProfit
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 454,
+                                                            lineNumber: 453,
                                                             columnNumber: 87
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 454,
+                                                    lineNumber: 453,
                                                     columnNumber: 21
                                                 }, this),
                                                 simulationResult.potentialLoss && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3000,7 +2999,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                             children: "Potential Loss:"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 457,
+                                                            lineNumber: 456,
                                                             columnNumber: 52
                                                         }, this),
                                                         " ",
@@ -3009,13 +3008,13 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                             children: simulationResult.potentialLoss
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 457,
+                                                            lineNumber: 456,
                                                             columnNumber: 85
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 457,
+                                                    lineNumber: 456,
                                                     columnNumber: 21
                                                 }, this),
                                                 simulationResult.gasFeeEstimation && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3025,7 +3024,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                             children: "Gas Fee Estimation:"
                                                         }, void 0, false, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 460,
+                                                            lineNumber: 459,
                                                             columnNumber: 58
                                                         }, this),
                                                         " ",
@@ -3033,13 +3032,13 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 460,
+                                                    lineNumber: 459,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                            lineNumber: 449,
+                                            lineNumber: 448,
                                             columnNumber: 18
                                         }, this),
                                         simulationResult.lastGaslessQuoteDetails && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3050,7 +3049,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                     children: "Last 0x Gasless Quote Fetched"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 466,
+                                                    lineNumber: 465,
                                                     columnNumber: 23
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3062,7 +3061,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                                     children: "Sell:"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                    lineNumber: 468,
+                                                                    lineNumber: 467,
                                                                     columnNumber: 28
                                                                 }, this),
                                                                 " ",
@@ -3073,13 +3072,13 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                                     children: simulationResult.lastGaslessQuoteDetails.sellTokenAddress
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                    lineNumber: 468,
+                                                                    lineNumber: 467,
                                                                     columnNumber: 108
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 468,
+                                                            lineNumber: 467,
                                                             columnNumber: 25
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3088,7 +3087,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                                     children: "Buy:"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                    lineNumber: 469,
+                                                                    lineNumber: 468,
                                                                     columnNumber: 28
                                                                 }, this),
                                                                 " ",
@@ -3099,9 +3098,26 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                                     children: simulationResult.lastGaslessQuoteDetails.buyTokenAddress
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                    lineNumber: 469,
+                                                                    lineNumber: 468,
                                                                     columnNumber: 106
                                                                 }, this)
+                                                            ]
+                                                        }, void 0, true, {
+                                                            fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
+                                                            lineNumber: 468,
+                                                            columnNumber: 25
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                                                            children: [
+                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
+                                                                    children: "Price:"
+                                                                }, void 0, false, {
+                                                                    fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
+                                                                    lineNumber: 469,
+                                                                    columnNumber: 28
+                                                                }, this),
+                                                                " ",
+                                                                simulationResult.lastGaslessQuoteDetails.price
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
@@ -3111,14 +3127,14 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                             children: [
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
-                                                                    children: "Price:"
+                                                                    children: "Guaranteed Price:"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
                                                                     lineNumber: 470,
                                                                     columnNumber: 28
                                                                 }, this),
                                                                 " ",
-                                                                simulationResult.lastGaslessQuoteDetails.price
+                                                                simulationResult.lastGaslessQuoteDetails.guaranteedPrice
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
@@ -3128,27 +3144,10 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                                             children: [
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
-                                                                    children: "Guaranteed Price:"
-                                                                }, void 0, false, {
-                                                                    fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                    lineNumber: 471,
-                                                                    columnNumber: 28
-                                                                }, this),
-                                                                " ",
-                                                                simulationResult.lastGaslessQuoteDetails.guaranteedPrice
-                                                            ]
-                                                        }, void 0, true, {
-                                                            fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 471,
-                                                            columnNumber: 25
-                                                        }, this),
-                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                                            children: [
-                                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
                                                                     children: "Sources:"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                                    lineNumber: 472,
+                                                                    lineNumber: 471,
                                                                     columnNumber: 28
                                                                 }, this),
                                                                 " ",
@@ -3156,13 +3155,13 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 472,
+                                                            lineNumber: 471,
                                                             columnNumber: 25
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 467,
+                                                    lineNumber: 466,
                                                     columnNumber: 23
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -3170,13 +3169,13 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                     children: "Note: This quote was from the separate 0x tool and is shown for context."
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 474,
+                                                    lineNumber: 473,
                                                     columnNumber: 23
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                            lineNumber: 465,
+                                            lineNumber: 464,
                                             columnNumber: 19
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -3186,7 +3185,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                     children: "Key Risks:"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 479,
+                                                    lineNumber: 478,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("ul", {
@@ -3195,18 +3194,18 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                             children: risk
                                                         }, risk, false, {
                                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                            lineNumber: 481,
+                                                            lineNumber: 480,
                                                             columnNumber: 65
                                                         }, this))
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 480,
+                                                    lineNumber: 479,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                            lineNumber: 478,
+                                            lineNumber: 477,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Alert"], {
@@ -3217,7 +3216,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                     className: "h-4 w-4 text-destructive"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 485,
+                                                    lineNumber: 484,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertTitle"], {
@@ -3225,7 +3224,7 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                     children: "Disclaimer"
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 486,
+                                                    lineNumber: 485,
                                                     columnNumber: 19
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$ui$2f$alert$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["AlertDescription"], {
@@ -3233,25 +3232,25 @@ function SimulationArea({ userTokenHoldingsString, onSimulationComplete }) {
                                                     children: "This simulation is powered by AI and based on a mix of real and mock data for demonstration purposes. It is not financial advice. Always do your own research (DYOR) before making any investment decisions. DeFi involves significant risks."
                                                 }, void 0, false, {
                                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                                    lineNumber: 487,
+                                                    lineNumber: 486,
                                                     columnNumber: 19
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                            lineNumber: 484,
+                                            lineNumber: 483,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                                    lineNumber: 430,
+                                    lineNumber: 429,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/components/aethermind/SimulationArea.tsx",
-                            lineNumber: 423,
+                            lineNumber: 422,
                             columnNumber: 13
                         }, this)
                     ]

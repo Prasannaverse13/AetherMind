@@ -314,7 +314,6 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
                         <Select
                           onValueChange={value => handleParamChange(param.id, value)}
                           defaultValue={param.defaultValue as string || undefined}
-                          value={params[param.id] as string || undefined}
                           disabled={isSuggesting || isSimulating}
                         >
                           <SelectTrigger id={param.id} className="w-full h-11">
