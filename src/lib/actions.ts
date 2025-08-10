@@ -2,8 +2,9 @@
 "use server";
 import { explainDefiStrategy, ExplainDefiStrategyInput, ExplainDefiStrategyOutput } from '@/ai/flows/defi-strategy-explanation';
 import { personalizedStrategySuggestions, PersonalizedStrategySuggestionsInput, PersonalizedStrategySuggestionsOutput } from '@/ai/flows/personalized-strategy-suggestions';
-import { fetchOkxMarketSummary } from '@/services/okxService'; // Import the new service
-import type { SimulationResult } from '@/types';
+import { fetchOkxMarketSummary } from '@/services/okxService';
+import type { ZeroExQuoteParams, FetchGaslessQuoteResult } from '@/services/zeroxService';
+import { fetchGaslessQuote } from '@/services/zeroxService';
 
 export async function getStrategyExplanation(input: ExplainDefiStrategyInput): Promise<ExplainDefiStrategyOutput | null> {
   try {
@@ -28,16 +29,8 @@ export async function getPersonalizedSuggestions(input: PersonalizedStrategySugg
   }
 }
 
-/**
- * Retrieves market conditions.
- * Previously getMockOkxMarketConditions, now attempts to use the okxService.
- * NOTE: okxService.fetchOkxMarketSummary() currently returns MOCK DATA.
- * Real-time integration with OKX DEX is a future development task.
- */
 export async function getOkxMarketConditions(): Promise<string> {
   try {
-    // This will call the service, which currently returns mock data.
-    // Replace with actual API call implementation in okxService.ts later.
     const marketSummary = await fetchOkxMarketSummary();
     return marketSummary;
   } catch (error) {
@@ -46,3 +39,14 @@ export async function getOkxMarketConditions(): Promise<string> {
   }
 }
 
+export async function get0xGaslessQuote(params: ZeroExQuoteParams): Promise<FetchGaslessQuoteResult> {
+    try {
+        const result = await fetchGaslessQuote(params);
+        return result;
+    } catch (error) {
+        console.error("Error in get0xGaslessQuote server action:", error);
+        return {
+            error: "An unexpected error occurred in the server action.",
+        };
+    }
+}

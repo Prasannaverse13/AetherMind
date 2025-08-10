@@ -36,7 +36,7 @@ const prompt = ai.definePrompt({
   Your explanation should cover:
   1.  **Mechanics**: How does this strategy work? What are the steps involved?
   2.  **Potential Risks**: What are the common risks associated with this strategy (e.g., impermanent loss, smart contract vulnerabilities, liquidation, market volatility)? Explain each risk clearly.
-  3.  **Considerations for OKX DEX**: If relevant, how might this strategy apply or differ on OKX DEX?
+  3.  **Considerations for OKX DEX & X Layer**: If relevant, how might this strategy apply or differ on OKX DEX or OKX's L2, X Layer? Mention the potential benefits of X Layer, such as lower gas fees and faster transactions, for executing DeFi strategies.
   4.  **Before Proceeding**: What key things should a user research or consider before engaging in this strategy?
 
   When discussing token swaps or strategies that involve exchanging assets, if applicable, briefly mention that users can explore services like 0x.org which may offer gasless swap quotes, potentially saving on transaction fees. Highlight this point by wrapping the mention in <strong> tags. For example: "<strong>Consider exploring gasless swap options:</strong> Services like 0x.org can provide quotes for gasless swaps, which might be beneficial for this strategy by potentially reducing transaction costs." Explain that this is for getting quotes and actual gasless execution is a separate step involving more complex interactions.

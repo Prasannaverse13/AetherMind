@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import type { TokenBalance, WalletState } from '@/types';
+import type { TokenBalance, WalletState, ZeroExQuoteInput } from '@/types';
 
 const formatEth = (wei: string): number => {
   if (!wei || typeof wei !== 'string' || !wei.startsWith('0x')) {
@@ -27,6 +27,8 @@ const getNetworkName = (chainId: string | null): string => {
     case '80001': return 'Polygon Mumbai';
     case '65': return 'OKXChain Testnet';
     case '66': return 'OKXChain Mainnet';
+    case '195': return 'X Layer Testnet';
+    case '196': return 'X Layer Mainnet';
     // Add more common networks as needed
     default: return `Chain ID: ${decimalChainId}`;
   }
@@ -43,6 +45,7 @@ const initialWalletState: WalletState = {
   refreshBalance: async () => { console.warn("refreshBalance called on initial state"); },
   loading: false, // Set to false initially, true during operations
   error: null,
+  getConnectedWalletAddress: () => null,
 };
 
 export const useWallet = (): WalletState => {
@@ -89,7 +92,7 @@ export const useWallet = (): WalletState => {
       if (chainId === '0x38' || chainId === '0x61') nativeSymbol = 'BNB'; // BNB Smart Chain (Mainnet/Testnet)
       if (chainId === '0x89' || chainId === '0x13881') nativeSymbol = 'MATIC'; // Polygon (Mainnet/Mumbai)
       if (chainId === '0x42' || chainId === '0x41') nativeSymbol = 'OKT'; // OKXChain (Mainnet/Testnet)
-
+      if (chainId === '0xc4' || chainId === '0xc3') nativeSymbol = 'OKB'; // X Layer uses OKB
 
       if (isMounted) {
         setBalance([{
@@ -263,8 +266,12 @@ export const useWallet = (): WalletState => {
   if (!isMounted) {
       return { ...initialWalletState, loading: true };
   }
+  
+  const getConnectedWalletAddress = () => {
+    return account;
+  };
 
-  return { isConnected, account, balance, networkName, connectWallet, disconnectWallet, refreshBalance, loading, error };
+  return { isConnected, account, balance, networkName, connectWallet, disconnectWallet, refreshBalance, loading, error, getConnectedWalletAddress };
 };
 
 export const formatBalanceForAI = (balance: TokenBalance[]): string => {
