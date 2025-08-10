@@ -66,25 +66,56 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
   const [displayTime, setDisplayTime] = useState<string | null>(null);
   const [selectedRiskProfile, setSelectedRiskProfile] = useState<RiskProfile>('balanced');
   
-  // State for 0x Gasless Quote Tool
   const { getConnectedWalletAddress } = useWallet();
   const [zeroExInput, setZeroExInput] = useState<ZeroExQuoteInput>({
     chainId: '1',
-    sellToken: '0xC18360217D8F7Ab5e7c516566761Ea12Ce7F9D72', // WETH on Ethereum
+    sellToken: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2', // WETH on Ethereum
     buyToken: '0xdac17f958d2ee523a2206206994597c13d831ec7', // USDT on Ethereum
     sellAmount: '1000000000000000000', // 1 WETH
-    takerAddress: getConnectedWalletAddress() ?? ''
+    takerAddress: ''
   });
   const [gaslessQuoteResult, setGaslessQuoteResult] = useState<FetchGaslessQuoteResult | null>(null);
   const [isFetchingQuote, startFetchingQuoteTransition] = useTransition();
 
-  // Effect to update takerAddress when wallet connects/disconnects
+  const selectedStrategy = strategies.find(s => s.id === selectedStrategyId);
+
   useEffect(() => {
     const connectedAddress = getConnectedWalletAddress();
-    if (connectedAddress) {
+    if (connectedAddress && zeroExInput.takerAddress !== connectedAddress) {
       setZeroExInput(prev => ({ ...prev, takerAddress: connectedAddress }));
     }
-  }, [getConnectedWalletAddress]);
+  }, [getConnectedWalletAddress, zeroExInput.takerAddress]);
+
+  useEffect(() => {
+    if (selectedStrategy) {
+      const defaultParams: SimulationParams = { riskProfile: selectedRiskProfile };
+      selectedStrategy.parameters.forEach(p => {
+        if (p.defaultValue !== undefined) {
+          defaultParams[p.id] = p.defaultValue;
+        }
+      });
+      setParams(defaultParams);
+      setSimulationResult(null);
+    } else {
+      setParams({ riskProfile: selectedRiskProfile });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedStrategy, selectedRiskProfile]);
+
+  const handleStrategyChange = (value: string) => {
+    const strategyId = value as DeFiStrategyType;
+    setSelectedStrategyId(strategyId);
+  };
+
+  const handleParamChange = (paramId: string, value: string | number) => {
+    setParams(prev => ({ ...prev, [paramId]: value }));
+  };
+
+  const handleRiskProfileChange = (value: string) => {
+    const newRiskProfile = value as RiskProfile;
+    setSelectedRiskProfile(newRiskProfile);
+    setParams(prev => ({ ...prev, riskProfile: newRiskProfile }));
+  };
 
   const handleZeroExInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -120,34 +151,11 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
     return undefined;
   };
 
-
   useEffect(() => {
     const now = new Date();
     setDisplayTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
   }, [simulationResult]);
 
-  const selectedStrategy = strategies.find(s => s.id === selectedStrategyId);
-
-  const handleStrategyChange = (value: string) => {
-    const strategyId = value as DeFiStrategyType;
-    setSelectedStrategyId(strategyId);
-    const strategy = strategies.find(s => s.id === strategyId);
-    const defaultParams: SimulationParams = { riskProfile: selectedRiskProfile };
-    strategy?.parameters.forEach(p => {
-      if (p.defaultValue !== undefined) defaultParams[p.id] = p.defaultValue;
-    });
-    setParams(defaultParams);
-    setSimulationResult(null);
-  };
-
-  const handleParamChange = (paramId: string, value: string | number) => {
-    setParams(prev => ({ ...prev, [paramId]: value }));
-  };
-
-  const handleRiskProfileChange = (value: string) => {
-    setSelectedRiskProfile(value as RiskProfile);
-    setParams(prev => ({ ...prev, riskProfile: value as RiskProfile }));
-  };
 
   const runSimulation = async () => {
     if (!selectedStrategy) return;
@@ -161,28 +169,17 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
       };
       const aiExplanationResult = await getStrategyExplanation(explanationInput);
 
-      const suggestionsInput: Parameters<typeof getPersonalizedSuggestions>[0] = {
-        userTokenHoldings: userTokenHoldingsString,
-        okxDexMarketConditions: marketConditions,
-        riskProfile: selectedRiskProfile,
-      };
-      const aiSuggestionsForPortfolio = await getPersonalizedSuggestions(suggestionsInput);
-
-
       let result: SimulationResult = {
         strategyName: selectedStrategy.name,
         risksInvolved: selectedStrategy.risks,
         aiExplanation: aiExplanationResult?.explanation || "<p>Could not retrieve detailed explanation for this strategy.</p>",
-        aiSuggestions: aiSuggestionsForPortfolio?.suggestedStrategies || "<p>No general portfolio suggestions generated at this time.</p>",
-        aiRationale: aiSuggestionsForPortfolio?.rationale || "<p>General rationale not available.</p>",
         gasFeeEstimation: "0.01 - 0.05 ETH (estimate based on typical network conditions)",
         lastGaslessQuoteDetails: prepareLastGaslessQuoteDetails(),
       };
 
-      // Mock calculations for simulation results based on strategy
       if (selectedStrategy.id === 'yield-farming') {
-        const baseApy = currentParams.platform === 'x-layer' ? 8 : 5; // Higher base APY for X Layer
-        result.estimatedAPY = `${(Math.random() * 15 + baseApy).toFixed(2)}% (AI Projected)`; // Mock APY
+        const baseApy = currentParams.platform === 'x-layer' ? 8 : 5; 
+        result.estimatedAPY = `${(Math.random() * 15 + baseApy).toFixed(2)}% (AI Projected)`;
         result.potentialProfit = `~$${(Number(currentParams.amount || 0) * 0.01 * (Math.random() * 1 + 0.5)).toFixed(2)} (Projected for ${currentParams.duration} days based on mock rates)`;
       } else if (selectedStrategy.id === 'flash-loan') {
         result.potentialProfit = `~$${(Number(currentParams.borrowAmount || 0) * 0.0005 * (Math.random() * 1 + 0.1)).toFixed(2)} (Potential per arbitrage event, highly variable)`;
@@ -196,7 +193,8 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
 
   const getAISuggestions = () => {
     startSuggestionTransition(async () => {
-      setSimulationResult(null); // Clear previous specific simulation results
+      setSelectedStrategyId(null);
+      setSimulationResult(null); 
       const marketConditions = await getOkxMarketConditions();
       const suggestionsInput: Parameters<typeof getPersonalizedSuggestions>[0] = {
         userTokenHoldings: userTokenHoldingsString,
@@ -276,7 +274,7 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
               </div>
               <div>
                 <Label htmlFor="strategy-select" className="text-lg font-semibold mb-2 block text-foreground">DeFi Strategy to Simulate</Label>
-                <Select onValueChange={handleStrategyChange}>
+                <Select onValueChange={handleStrategyChange} value={selectedStrategyId || ""}>
                   <SelectTrigger id="strategy-select" className="w-full h-12 text-base" disabled={isSuggesting || isSimulating}>
                     <SelectValue placeholder="Choose a specific strategy..." />
                   </SelectTrigger>
@@ -313,7 +311,7 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
                       {param.type === 'select' && param.options && (
                         <Select
                           onValueChange={value => handleParamChange(param.id, value)}
-                          defaultValue={param.defaultValue as string || undefined}
+                          value={params[param.id] as string || undefined}
                           disabled={isSuggesting || isSimulating}
                         >
                           <SelectTrigger id={param.id} className="w-full h-11">
@@ -375,7 +373,7 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
                                 <div className="space-y-2">
                                     <div>
                                         <Label htmlFor="sellToken">Sell Token Address</Label>
-                                        <Input id="sellToken" name="sellToken" value={zeroExInput.sellToken} onChange={handleZeroExInputChange} placeholder="e.g., 0xC183..."/>
+                                        <Input id="sellToken" name="sellToken" value={zeroExInput.sellToken} onChange={handleZeroExInputChange} placeholder="e.g., 0xC02a..."/>
                                     </div>
                                     <div>
                                         <Label htmlFor="buyToken">Buy Token Address</Label>
@@ -468,7 +466,7 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
                         <p><strong>Buy:</strong> {simulationResult.lastGaslessQuoteDetails.buyAmount} of <span className="font-mono">{simulationResult.lastGaslessQuoteDetails.buyTokenAddress}</span></p>
                         <p><strong>Price:</strong> {simulationResult.lastGaslessQuoteDetails.price}</p>
                         <p><strong>Guaranteed Price:</strong> {simulationResult.lastGaslessQuoteDetails.guaranteedPrice}</p>
-                        <p><strong>Sources:</strong> {simulationResult.lastGaslessQuoteDetails.sources.map(s => `${s.name} (${parseFloat(s.proportion) * 100}%)`).join(', ')}</p>
+                        <p><strong>Sources:</strong> {simulationResult.lastGaslessQuoteDetails.sources.map(s => `${s.name} (${(parseFloat(s.proportion) * 100).toFixed(1)}%)`).join(', ')}</p>
                       </div>
                       <p className="text-xs italic text-muted-foreground/80">Note: This quote was from the separate 0x tool and is shown for context.</p>
                   </div>
