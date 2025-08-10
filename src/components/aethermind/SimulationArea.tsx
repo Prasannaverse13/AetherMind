@@ -276,7 +276,7 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
               </div>
               <div>
                 <Label htmlFor="strategy-select" className="text-lg font-semibold mb-2 block text-foreground">DeFi Strategy to Simulate</Label>
-                <Select onValueChange={handleStrategyChange} value={selectedStrategyId || ""}>
+                <Select onValueChange={handleStrategyChange}>
                   <SelectTrigger id="strategy-select" className="w-full h-12 text-base" disabled={isSuggesting || isSimulating}>
                     <SelectValue placeholder="Choose a specific strategy..." />
                   </SelectTrigger>
@@ -496,4 +496,3 @@ export function SimulationArea({ userTokenHoldingsString, onSimulationComplete }
     </section>
   );
 }
- 
